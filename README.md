@@ -178,20 +178,22 @@ Follow these steps to set up the project locally:
     - `cd TKPrilep`
 3. Install PHP Dependencies
     - `composer install`
-4. Set Up Environment File
+4. Set Up the Environment
+    -`cp .env.example .env`
+5. Set Up Environment File
     - `DB_CONNECTION=mysql
        DB_HOST=127.0.0.1
        DB_PORT=3306
        DB_DATABASE=tkprilep_reservations
        DB_USERNAME=root
        DB_PASSWORD=`
-5. Run Database Migartions:
+6. Run Database Migartions:
     - `php artisan migrate`
-6. Install Front-End Dependencies
+7. Install Front-End Dependencies
     - `npm install`
-7. Compile Assets
+8. Compile Assets
     - `npm run dev`
-8. Run the Development Server
+9. Run the Development Server
     - `php artisan serve`
    
 

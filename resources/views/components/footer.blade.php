@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <footer class="bg-gray-800 text-white py-6">
     <div class="container mx-auto flex flex-col items-center">
         <!-- Social Media Links -->
