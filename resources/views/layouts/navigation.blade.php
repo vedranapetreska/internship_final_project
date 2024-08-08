@@ -12,16 +12,16 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     @auth
-                        <x-nav-link href="#">
+                        <x-nav-link href="/" :active="request()->routeIs('reservation')">
                             {{ __('Reservation') }}
                         </x-nav-link>
                     @endauth
-                        <x-nav-link href="#">
-                            {{ __('About Us') }}
-                        </x-nav-link>
-                        <x-nav-link href="#">
-                            {{ __('Contact') }}
-                        </x-nav-link>
+                    <x-nav-link href="/" :active="request()->routeIs('about')">
+                        {{ __('About Us') }}
+                    </x-nav-link>
+                    <x-nav-link href="/" :active="request()->routeIs('contact')">
+                        {{ __('Contact') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -61,7 +61,7 @@
                     </x-dropdown>
                 @else
                     <!-- Login and Registration Links for Guests -->
-                    <div class="rounded-md px-3 py-1 text-black transition hover:text-gray-500 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-gray-300 dark:focus-visible:ring-white">
+                    <div class="rounded-md px-3 py-1 text-black transition hover:text-gray-300 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-gray-300 dark:focus-visible:ring-white">
                         <x-login-registration></x-login-registration>
                     </div>
                 @endauth
