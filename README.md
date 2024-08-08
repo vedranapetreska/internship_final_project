@@ -180,21 +180,23 @@ Follow these steps to set up the project locally:
     - `composer install`
 4. Set Up the Environment
     -`cp .env.example .env`
-5. Set Up Environment File
+5. Generate Application Key
+    - `php artisan key:generate`
+6. Set Up Environment File
     - `DB_CONNECTION=mysql
        DB_HOST=127.0.0.1
        DB_PORT=3306
        DB_DATABASE=tkprilep_reservations
        DB_USERNAME=root
        DB_PASSWORD=`
-6. Run Database Migartions:
+7. Run Database Migartions:
     - `php artisan migrate`
-7. Install Front-End Dependencies
+8. Install Front-End Dependencies
     - `npm install`
-8. Compile Assets
+9. Compile Assets
     - `npm run dev`
-9. Run the Development Server
-    - `php artisan serve`
+10. Run the Development Server
+     - `php artisan serve`
    
 
 
