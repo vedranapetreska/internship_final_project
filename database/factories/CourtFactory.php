@@ -17,7 +17,7 @@ class CourtFactory extends Factory
     public function definition(): array
     {
         return [
-            'court_number' => fake()->numberBetween(1, 3),
+
         ];
     }
 }

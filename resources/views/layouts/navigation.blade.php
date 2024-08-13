@@ -11,14 +11,10 @@
                 </div>
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    @auth
-                        <x-nav-link href="{{ route('reservation.create') }}" :active="request()->routeIs('reservation')">
-                            {{ __('Reservation') }}
-                        </x-nav-link>
-                    @endauth
-                        <x-nav-link href="{{ route('calendar') }}" :active="request()->routeIs('calendar')">
-                            {{ __('Calendar') }}
-                        </x-nav-link>
+                    <x-nav-link href="{{ route('reservation.index') }}" :active="request()->routeIs('reservation')">
+                        {{ __('Reservations') }}
+                    </x-nav-link>
+
                     <x-nav-link href="/" :active="request()->routeIs('about')">
                         {{ __('About Us') }}
                     </x-nav-link>

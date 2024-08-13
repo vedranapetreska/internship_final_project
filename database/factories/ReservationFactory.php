@@ -32,7 +32,7 @@ class ReservationFactory extends Factory
 
 
         return [
-            'court_id' => Court::factory(),
+            'court_id' =>  Court::inRandomOrder()->first()->id,
             'user_id' => User::factory(),
             'start_time' => $startTime,
             'end_time' => $endTime,

@@ -1,6 +1,8 @@
 <x-app-layout>
 @include('layouts.navigation')
 <section class="relative min-h-screen flex items-center justify-center bg-gray-400">
+    @include('reservations.reservations-table')
+
     <div class="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg">
         <h1 class="text-3xl font-bold mb-6 text-gray-900">Make a Reservation</h1>
 
@@ -58,11 +60,21 @@
                 @enderror
             </div>
 
-            <button type="submit" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-black bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                Reserve
-            </button>
+            <div class = "space-x-8 sm:-my-px sm:flex">
+                <button type="submit"  class="inline-flex items-center px-3 py-1 border border-transparent text-base font-medium rounded-lg shadow-sm text-black bg-customGreen hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Reserve
+                </button>
+
+                <a href="{{ route('reservation.show') }}" class="inline-flex items-center px-2 py-1 border border-transparent text-small font-medium rounded-lg shadow-sm text-black bg-indigo-300 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Your Reservations
+                </a>
+
+
+            </div>
+
         </form>
     </div>
+
 
 
 </section>

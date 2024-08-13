@@ -4,34 +4,19 @@
         <!-- Standard Navigation -->
         @include('layouts.navigation')
 
-        <section class="relative min-h-screen flex items-center justify-center bg-gray-400">
+        <section class="relative min-h-screen flex flex-col items-center justify-center bg-gray-400 p-6">
 
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Court Number</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach($reservations as $reservation)
-                    <tr>
-                        <td>{{ $reservation->court->court_number }}</td>
-                        <td>{{ $reservation->start_time }}</td>
-                        <td>{{ $reservation->end_time }}</td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
+           @include('reservations.reservations-table')
 
-            <a href="reservation">Book here</a>
+            <!-- Make Reservation Button -->
+            <div class="mt-4">
+                <a href="{{ route('reservation.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Make a Reservation
+                </a>
+            </div>
         </section>
+
         <!-- Footer -->
         <x-footer></x-footer>
-
     </div>
-
-
 </x-app-layout>
-
