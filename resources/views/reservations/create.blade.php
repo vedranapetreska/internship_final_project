@@ -1,7 +1,7 @@
 <x-app-layout>
 @include('layouts.navigation')
 <section class="relative min-h-screen flex items-center justify-center bg-gray-400">
-    @include('reservations.reservations-table')
+    @include('reservations.reservations-table',['slot1'=>'/reservations/create'])
 
     <div class="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg">
         <h1 class="text-3xl font-bold mb-6 text-gray-900">Make a Reservation</h1>

@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+//use ShayanYS\LaraReserve\Interfaces\CustomerInterface;
+//use ShayanYS\LaraReserve\Traits\Customer;
 
 class User extends Authenticatable
 {

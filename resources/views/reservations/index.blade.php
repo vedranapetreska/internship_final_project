@@ -6,7 +6,7 @@
 
         <section class="relative min-h-screen flex flex-col items-center justify-center bg-gray-400 p-6">
 
-           @include('reservations.reservations-table')
+            @include('reservations.reservations-table',['slot1'=>'/reservations/index'])
 
             <!-- Make Reservation Button -->
             <div class="mt-4">

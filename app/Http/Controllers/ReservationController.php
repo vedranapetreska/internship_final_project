@@ -2,70 +2,155 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ReservationRequest;
 use App\Models\Court;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Carbon\Carbon;
+use App\Services\TimeSlotService;
 
 class ReservationController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-//        // Fetch all reservations with related user and court data
-//        $reservations = Reservation::with(['user', 'court'])->get()
-//            ->sortBy(function($reservation) {
-//            return $reservation->court->court_number;
-//        });
-        $reservations = Reservation::with('court', 'user')
-            ->orderBy('date')
-            ->orderBy('court_id')
-            ->get();
-//
-//        // Pass the reservations to the view
-        return view('reservations.index', compact('reservations'));
 
-
+    protected $timeSlotService;
+    public function __construct(TimeSlotService $timeSlotService){
+        $this->timeSlotService = $timeSlotService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    protected function getAvailableSlots($date)
     {
-        $reservations = Reservation::with('court', 'user')
+        $startTime = '07:00';
+        $endTime = '22:00';
+        $allSlots = $this->timeSlotService->generateTimeSlots($startTime, $endTime);
+        $reservedTimes = Reservation::where('date', $date)->get(['court_id', 'start_time', 'end_time']);
+        $freeSlotsByCourt = [];
+
+        $courts = Court::all();
+        foreach ($courts as $court) {
+            $freeSlots = [];
+            $courtReservedTimes = $reservedTimes->where('court_id', $court->id);
+
+            foreach ($allSlots as $slot) {
+                $isFree = true;
+                foreach ($courtReservedTimes as $reserved) {
+                    if ($this->timeSlotService->isOverlapping($slot, $reserved)) {
+                        $isFree = false;
+                        break;
+                    }
+                }
+                if ($isFree) {
+                    $freeSlots[] = $slot;
+                }
+            }
+
+            $freeSlotsByCourt[$court->id] = [
+                'court_number' => $court->court_number,
+                'slots' => $freeSlots
+            ];
+        }
+        return $freeSlotsByCourt;
+    }
+
+
+    public function index(Request $request)
+    {
+        $now = Carbon::now();
+
+        // Get today's date
+        $today = $now->format('Y-m-d');
+
+        // Calculate dates for the next week
+        $datesForWeek = [];
+
+        for ($i = 0; $i < 7; $i++) {
+            $datesForWeek[] = $now->copy()->addDays($i)->format('Y-m-d');
+        }
+
+        $date = $request->input('date', $today);
+
+        // Fetch future reservations
+        $reservations = Reservation::with(['user', 'court'])
+            ->where(function($query) use ($now) {
+                $query->where('date', '>', $now->format('Y-m-d'))
+                    ->orWhere(function($query) use ($now) {
+                        $query->where('date', $now->format('Y-m-d'))
+                            ->where('start_time', '>', $now->format('H:i:s'));
+                    });
+            })
             ->orderBy('date')
             ->orderBy('court_id')
             ->get();
+
+        // Default to today's date if not provided
+
+        // Fetch available slots
+        $freeSlotsByCourt = $this->getAvailableSlots($today);
+
+        return view('reservations.index', compact('reservations', 'freeSlotsByCourt', 'date', 'datesForWeek'));
+    }
+    public function create(Request $request)
+    {
+        $now = Carbon::now();
+
+        // Get today's date
+        $today = $now->format('Y-m-d');
+
+        // Calculate dates for the next week
+        $datesForWeek = [];
+
+        for ($i = 0; $i < 7; $i++) {
+            $datesForWeek[] = $now->copy()->addDays($i)->format('Y-m-d');
+        }
+
+        $date = $request->input('date', $today);
+
+        // Fetch only future reservations with related user and court data
+        $reservations = Reservation::with(['user', 'court'])
+            ->where(function($query) use ($now) {
+                $query->where('date', '>', $now->format('Y-m-d'))
+                    ->orWhere(function($query) use ($now) {
+                        // For reservations on the current date, check if the start_time is in the future
+                        $query->where('date', $now->format('Y-m-d'))
+                            ->where('start_time', '>', $now->format('H:i:s'));
+                    });
+            })
+            ->orderBy('date')
+            ->orderBy('court_id')
+            ->get();
+
+        $freeSlotsByCourt = $this->getAvailableSlots($today);
+
+
         $courts = Court::all();
-        return view('reservations.create', compact('courts', 'reservations'));
+        return view('reservations.create', compact('courts', 'reservations', 'date', 'datesForWeek', 'datesForWeek', 'freeSlotsByCourt'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-
-    public function store(Request $request)
+    public function store(ReservationRequest $request)
     {
-        // Validate the request data
-        $request->validate([
-            'court_id' => 'required|exists:courts,id',
-            'start_time' => 'required|date_format:H:i', // Validate as a required time in the format HH:MM
-            'end_time' => 'required|date_format:H:i|after:start_time', // Validate as a required time in the format HH:MM and must be after start_time
-            'date' => 'required|date_format:Y-m-d',
 
-        ]);
+        $validated = request()->validated();
 
+        // Combine date and start_time to create a full datetime
+        $startDateTime = Carbon::parse($request->input('date') . ' ' . $request->input('start_time'));
 
-        // Extract the input values from the request
+        // Ensure that the reservation is in the future
+        if ($startDateTime->isPast()) {
+            return redirect()->back()->with('error', 'The reservation time must be in the future.');
+        }
+
         $startTime = $request->input('start_time');
         $endTime = $request->input('end_time');
         $courtId = $request->input('court_id');
         $date = $request->input('date');
 
-        // Check if the new reservation overlaps with existing reservations
         $overlapExists = Reservation::where('court_id', $courtId)
             ->where('date', $date)
             ->where(function ($query) use ($startTime, $endTime) {
@@ -80,12 +165,10 @@ class ReservationController extends Controller
             })
             ->exists();
 
-        // If an overlap is detected, return an error response
         if ($overlapExists) {
             return redirect()->back()->with('error', 'The selected time slot overlaps with an existing reservation.');
         }
 
-        // If no overlap, create a new reservation
         Reservation::create([
             'user_id' => Auth::id(),
             'court_id' => $courtId,
@@ -94,7 +177,6 @@ class ReservationController extends Controller
             'date' => $date
         ]);
 
-        // Redirect back with a success message
         return redirect()->back()->with('success', 'Reservation made successfully!');
     }
 
@@ -129,19 +211,20 @@ class ReservationController extends Controller
         return view('reservations.edit', compact('reservation', 'courts'));
     }
 
-
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Reservation $reservation)
+    public function update(ReservationRequest $request, Reservation $reservation)
     {
-        // Validate the request data
-        $request->validate([
-            'court_id' => 'required|exists:courts,id',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
-            'date' => 'required|date_format:Y-m-d',
-        ]);
+
+       $validated = request()->validated();
+
+        $startDateTime = Carbon::parse($request->input('date') . ' ' . $request->input('start_time'));
+
+        // Ensure that the reservation is in the future
+        if ($startDateTime->isPast()) {
+            return redirect()->back()->with('error', 'The reservation time must be in the future.');
+        }
 
         $startTime = $request->input('start_time');
         $endTime = $request->input('end_time');
@@ -173,7 +256,7 @@ class ReservationController extends Controller
         ]);
 
         // Redirect back with a success message
-        return redirect()->back()->with('success', 'Reservation updated successfully!');
+        return redirect()->route('reservation.show')->with('success', 'Reservation updated successfully!');
     }
 
     /**
@@ -181,11 +264,11 @@ class ReservationController extends Controller
      */
     public function destroy(string $id)
     {
-//        $user = Auth::user();
-//
-//        $reservations = Reservation::where('user_id', $user->id)->delete();
-//
-//        //redirect
-//        return redirect('reservations.user-reservations');
+        $reservation = Reservation::findOrFail($id);
+
+        $reservation->delete();
+
+        // Redirect
+        return redirect()->route('reservation.show')->with('success', 'Reservation deleted successfully!');
     }
 }

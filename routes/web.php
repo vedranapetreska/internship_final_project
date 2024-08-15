@@ -8,18 +8,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('reservation/index', [\App\Http\Controllers\ReservationController::class, 'index'])->name('reservation.index');
+Route::get('/reservations/index', [\App\Http\Controllers\ReservationController::class, 'index'])->name('reservation.index');
 
-Route::get('reservation', [\App\Http\Controllers\ReservationController::class, 'create'])->middleware('auth')->name('reservation.create');
-Route::post('reservation/store', [\App\Http\Controllers\ReservationController::class, 'store'])->middleware('auth')->name('reservation.store');
-
-// routes/web.php
-
-Route::get('/reservations', [ReservationController::class, 'show'])->name('reservation.show');
-Route::get('/reservation/{id}/edit', [ReservationController::class, 'edit'])->middleware('auth')->name('reservation.edit');
-Route::put('/reservation/{reservation}', [ReservationController::class, 'update'])->name('reservation.update');
-
-
+Route::middleware(['auth'])->group(function () {
+    Route::get('/reservations/create', [\App\Http\Controllers\ReservationController::class, 'create'])->name('reservation.create');
+    Route::post('/reservations/store', [\App\Http\Controllers\ReservationController::class, 'store'])->name('reservation.store');
+    Route::get('/reservations', [ReservationController::class, 'show'])->name('reservation.show');
+    Route::get('/reservations/{id}/edit', [ReservationController::class, 'edit'])->name('reservation.edit');
+    Route::delete('/reservations/{id}', [ReservationController::class, 'destroy'])->name('reservation.destroy');
+    Route::put('/reservations/{reservation}', [ReservationController::class, 'update'])->name('reservation.update');
+});
 
 Route::get('/dashboard', function () {
     return view('dashboard');

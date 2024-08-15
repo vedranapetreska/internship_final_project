@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8dff50cd87971b67202b5d2f8cc95408",
+    "content-hash": "69cb2b709aa239eae9096c60fc266bcb",
     "packages": [
         {
             "name": "brick/math",
@@ -3107,6 +3107,57 @@
                 }
             ],
             "time": "2024-04-27T21:32:50+00:00"
+        },
+        {
+            "name": "shayanys/lara-reserve",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shayan-yousefi/lara-reserve.git",
+                "reference": "bc38db60de78d462218691fef3a6440538f5d0d5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shayan-yousefi/lara-reserve/zipball/bc38db60de78d462218691fef3a6440538f5d0d5",
+                "reference": "bc38db60de78d462218691fef3a6440538f5d0d5",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.0",
+                "phpunit/phpunit": "^10.1"
+            },
+            "type": "laravel-package",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "ShayanYS\\LaraReserve\\LaraReserveServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ShayanYS\\LaraReserve\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "shayan",
+                    "email": "shayan.yousefi100@yahoo.com"
+                }
+            ],
+            "description": "a package to do reservation",
+            "support": {
+                "issues": "https://github.com/shayan-yousefi/lara-reserve/issues",
+                "source": "https://github.com/shayan-yousefi/lara-reserve/tree/2.0.0"
+            },
+            "time": "2023-05-06T13:21:23+00:00"
         },
         {
             "name": "symfony/clock",

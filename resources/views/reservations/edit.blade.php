@@ -17,7 +17,6 @@
                     <span class="block sm:inline">{{ session('success') }}</span>
                 </div>
             @endif
-
             <form action="{{ route('reservation.update', $reservation->id) }}" method="POST">
                 @csrf
                 @method('PUT')
@@ -60,9 +59,16 @@
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
+                    <button type="submit" class="inline-flex items-center px-3 py-1 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-customGreen hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Update
+                    </button>
+            </form>
 
-                <button type="submit" class="inline-flex items-center px-3 py-1 border border-transparent text-base font-medium rounded-lg shadow-sm text-black bg-customGreen hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Update Reservation
+            <form action="{{ route('reservation.destroy', $reservation->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this reservation?');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="inline-flex items-center px-3 py-1 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    Delete
                 </button>
             </form>
         </div>
