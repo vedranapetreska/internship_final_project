@@ -7,7 +7,7 @@ use Carbon\Carbon;
 class TimeSlotService
 {
 
-    public function generateTimeSlots($startTime, $endTime, $intervalMinutes = 30)
+    public function generateTimeSlots($startTime, $endTime, $intervalMinutes = 60)
     {
         $slots = [];
         $current = Carbon::parse($startTime);

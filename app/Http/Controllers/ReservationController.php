@@ -52,13 +52,21 @@ class ReservationController extends Controller
                 'court_number' => $court->court_number,
                 'slots' => $freeSlots
             ];
+
         }
-        return $freeSlotsByCourt;
+
+        return[
+            'freeSlots' => $freeSlotsByCourt,
+            'allSlots' => $allSlots,
+            'reservedTimes' => $reservedTimes,
+        ];
     }
 
 
     public function index(Request $request)
     {
+
+        $courtNumbers = Court::pluck('court_number')->toArray();
         $now = Carbon::now();
 
         // Get today's date
@@ -79,22 +87,34 @@ class ReservationController extends Controller
                 $query->where('date', '>', $now->format('Y-m-d'))
                     ->orWhere(function($query) use ($now) {
                         $query->where('date', $now->format('Y-m-d'))
-                            ->where('start_time', '>', $now->format('H:i:s'));
+                            ->where('start_time', '>', $now->format('H:i'));
                     });
             })
             ->orderBy('date')
             ->orderBy('court_id')
             ->get();
 
-        // Default to today's date if not provided
+        $allSlots = $this->timeSlotService->generateTimeSlots('7:00', '23:00');
 
-        // Fetch available slots
-        $freeSlotsByCourt = $this->getAvailableSlots($today);
+        $slotsData = $this->getAvailableSlots($date);
+        $freeSlotsByCourt = $slotsData['freeSlots'];
+        $reservedTimes = $slotsData['reservedTimes'];
+        // Prepare a mapping of reserved slots for quick lookup
+        $reservedSlots = [];
+        foreach ($reservedTimes as $reservation) {
+            $reservedSlots[$reservation->court_id][] = $reservation->start_time . '-' . $reservation->end_time;
+        }
 
-        return view('reservations.index', compact('reservations', 'freeSlotsByCourt', 'date', 'datesForWeek'));
+//        dd($reservedSlots);
+//        dd($allSlots);
+
+        // Pass the reservedSlots to the view
+        return view('reservations.index', compact('reservations', 'reservedTimes', 'allSlots', 'courtNumbers', 'freeSlotsByCourt', 'date', 'datesForWeek', 'reservedSlots'));
     }
     public function create(Request $request)
     {
+        $courtNumbers = Court::pluck('court_number')->toArray();
+
         $now = Carbon::now();
 
         // Get today's date
@@ -123,21 +143,25 @@ class ReservationController extends Controller
             ->orderBy('court_id')
             ->get();
 
-        $freeSlotsByCourt = $this->getAvailableSlots($today);
-
+        $freeSlotsByCourt = $this->getAvailableSlots('$today');
+        $allSlots = $this->timeSlotService->generateTimeSlots('7:00', '23:00');
 
         $courts = Court::all();
-        return view('reservations.create', compact('courts', 'reservations', 'date', 'datesForWeek', 'datesForWeek', 'freeSlotsByCourt'));
+        return view('reservations.create', compact('courts', 'courtNumbers','allSlots', 'reservations', 'date', 'datesForWeek', 'datesForWeek', 'freeSlotsByCourt'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ReservationRequest $request)
+    public function store(Request $request)
     {
 
-        $validated = request()->validated();
-
+        $request->validate([
+            'court_id' => 'required|exists:courts,id',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'date' => 'required|date_format:Y-m-d|after_or_equal:today', // Ensure the date is today or in the future
+        ]);
         // Combine date and start_time to create a full datetime
         $startDateTime = Carbon::parse($request->input('date') . ' ' . $request->input('start_time'));
 
@@ -214,10 +238,15 @@ class ReservationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ReservationRequest $request, Reservation $reservation)
+    public function update(Request $request, Reservation $reservation)
     {
 
-       $validated = request()->validated();
+        $request->validate([
+            'court_id' => 'required|exists:courts,id',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'date' => 'required|date_format:Y-m-d|after_or_equal:today', // Ensure the date is today or in the future
+        ]);
 
         $startDateTime = Carbon::parse($request->input('date') . ' ' . $request->input('start_time'));
 

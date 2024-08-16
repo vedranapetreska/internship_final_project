@@ -19,6 +19,10 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/reservations/{reservation}', [ReservationController::class, 'update'])->name('reservation.update');
 });
 
+
+
+
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
