@@ -7,7 +7,7 @@ use Carbon\Carbon;
 class TimeSlotService
 {
 
-    public function generateTimeSlots($startTime, $endTime, $intervalMinutes = 60)
+    public function generateTimeSlots($startTime, $endTime, $intervalMinutes = 30)
     {
         $slots = [];
         $current = Carbon::parse($startTime);
@@ -16,7 +16,8 @@ class TimeSlotService
         while ($current->lessThan($end)) {
             $slots[] = [
                 'start' => $current->format('H:i'),
-                'end' => $current->copy()->addMinutes($intervalMinutes)->format('H:i')
+                'end' => $current->copy()->addMinutes($intervalMinutes)->format('H:i'),
+                'reserved'=>false
             ];
             $current->addMinutes($intervalMinutes);
         }
@@ -30,6 +31,7 @@ class TimeSlotService
         $slotEnd = Carbon::parse($slot['end']);
         $reservedStart = Carbon::parse($reserved->start_time);
         $reservedEnd = Carbon::parse($reserved->end_time);
+//        dd($reservedEnd,$reservedStart, $slotStart, $slotEnd);
 
         return $slotStart < $reservedEnd && $slotEnd > $reservedStart;
     }

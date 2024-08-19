@@ -1,7 +1,7 @@
 <x-app-layout>
 @include('layouts.navigation')
 <section class="relative min-h-screen flex items-center justify-center bg-gray-400">
-    @include('reservations.reservations-table',['slot1'=>'/reservations/create'])
+{{--    @include('reservations.reservations-table',['slot1'=>'/reservations/create'])--}}
 
     <div class="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg">
         <h1 class="text-3xl font-bold mb-6 text-gray-900">Make a Reservation</h1>
@@ -28,7 +28,7 @@
                 <select name="court_id" id="court_id" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
                     <option value="" disabled selected>Select a court</option>
                     @foreach($courts as $court)
-                        <option value="{{ $court->id }}">{{ $court->court_number }}</option>
+                        <option value="{{ $court->id }}">{{ $court->court_number}}</option>
                     @endforeach
                 </select>
                 @error('court_id')
@@ -38,7 +38,7 @@
 
             <div class="mb-5">
                 <label for="date" class="block text-sm font-medium text-gray-700">Reservation Date</label>
-                <input type="date" name="date" id="date" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                <input type="date" name="date" id="date"  class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
                 @error('date')
                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
