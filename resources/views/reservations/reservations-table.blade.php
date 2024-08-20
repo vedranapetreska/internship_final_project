@@ -43,7 +43,7 @@
                             {{ 'RESERVED' }}
                         @else
                             <a href="/reservations/create" class="bg-green-500 hover:bg-green-600 text-white">
-                                {{ $currentSlot['start'] . '-' . $currentSlot['end'] }}
+                                {{ $nextSlot['start'] . '-' . $nextSlot['end'] }}
                             </a>
                         @endif
                     </td>
