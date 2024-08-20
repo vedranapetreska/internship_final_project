@@ -124,6 +124,12 @@ class ReservationController extends Controller
     }
     public function create(Request $request)
     {
+        $courtNumber = (int)$request->query('court_number');
+        $date1 = Carbon::parse($request->query('date'))->format('Y-m-d');
+        $startTime=Carbon::parse($request->query('start_time'))->format('H:i');
+        $endTime=Carbon::parse($request->query('end_time'))->format('H:i');
+
+
         $courtNumbers = Court::pluck('court_number')->toArray();
         $now = Carbon::now();
         $oneWeekLater = $now->copy()->addWeek();
@@ -167,7 +173,8 @@ class ReservationController extends Controller
         }
 
         $courts = Court::all();
-        return view('reservations.create', compact('courts', 'reservations', 'courtNumbers','date', 'datesForWeek','allSlotsReal'));
+        return view('reservations.create', compact('courts', 'reservations', 'courtNumbers',
+            'date', 'date1', 'startTime', 'endTime', 'datesForWeek','allSlotsReal','courtNumber'));
     }
 
     /**
@@ -194,6 +201,7 @@ class ReservationController extends Controller
 
         $startTime = $request->input('start_time');
         $endTime = $request->input('end_time');
+//        @dd($startTime, $endTime);
         $courtId = $request->input('court_id');
         $date = $request->input('date');
 
@@ -201,17 +209,20 @@ class ReservationController extends Controller
             ->where('date', $date)
             ->where(function ($query) use ($startTime, $endTime) {
                 // Check if the reservation overlaps with the start time
-                $query->whereBetween('start_time', [$startTime, $endTime])
-                    ->orWhereBetween('end_time', [$startTime, $endTime])
+                $query
+                    ->whereBetween('start_time', [$startTime, $endTime])
+                    ->whereBetween('end_time', [$startTime, $endTime])
                     ->orWhere(function ($query) use ($startTime, $endTime) {
-                        // Check if the new reservation fully encompasses an existing reservation
+//                         Check if the new reservation fully encompasses an existing reservation
                         $query->where('start_time', '<=', $startTime)
                             ->where('end_time', '>=', $endTime);
                     });
             })
-            ->exists();
+            ->get();
 
-        if ($overlapExists) {
+
+
+        if (!$overlapExists->isEmpty()) {
             return redirect()->back()
                 ->withInput($request->all())
                 ->with('error', 'The selected time slot overlaps with an existing reservation.');
@@ -225,7 +236,7 @@ class ReservationController extends Controller
             'date' => $date
         ]);
 
-        return redirect()->route('reservation.index')->with('success', 'Reservation made successfully!');
+        return redirect()->route('reservation.show')->with('success', 'Reservation made successfully!');
     }
 
 

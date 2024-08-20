@@ -1,12 +1,22 @@
+@php use Carbon\Carbon; @endphp
 <x-app-layout>
     @include('layouts.navigation')
     <section class="relative min-h-screen flex items-start bg-gray-400 pt-16">
         <div class="flex flex-row justify-between max-w-4xl mx-auto p-4 space-x-4">
             <div class="flex-1 bg-white shadow-md rounded-lg p-3">
-                @include('reservations.reservations-table', ['slot1' => '/reservations/create'])
+                <div class="w-full max-w-sm" style="display: flex;justify-content: center;flex-direction: column;align-items:center ">
+
+                    <p class="border-2 border-black bg-gray-100 text-center text-xl font-medium py-2 rounded-md shadow-md mt-4" style="width:10rem">
+                        {{ $date }}
+                    </p>
+                </div>
+
+                @include('reservations.reservationChosenSlot')
+
+
             </div>
 
-            <div class="flex-1 bg-white shadow-md rounded-lg p-4 max-h-[60vh] overflow-auto">
+            <div class="flex-1 bg-white shadow-md rounded-lg p-4 max-h-[80vh] overflow-auto" style="width: 40rem">
                 <h1 class="text-2xl font-bold mb-4 text-gray-900">Make a Reservation</h1>
 
                 @if(session('error'))
@@ -23,58 +33,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('reservation.store') }}" method="POST">
-                    @csrf
-
-                    <div class="mb-4">
-                        <label for="court_id" class="block text-sm font-medium text-gray-700">Select Court</label>
-                        <select name="court_id" id="court_id" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-                            <option value="" disabled selected>Select a court</option>
-                            @foreach($courts as $court)
-                                <option value="{{ $court->id }}" {{ old('court_id') == $court->id ? 'selected' : '' }}>
-                                    {{ $court->court_number }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('court_id')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="date" class="block text-sm font-medium text-gray-700">Reservation Date</label>
-                        <input type="date" name="date" id="date" value="{{ old('date') }}" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-                        @error('date')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="start_time" class="block text-sm font-medium text-gray-700">Start Time</label>
-                        <input type="time" name="start_time" id="start_time" value="{{ old('start_time') }}" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-                        @error('start_time')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="end_time" class="block text-sm font-medium text-gray-700">End Time</label>
-                        <input type="time" name="end_time" id="end_time" value="{{ old('end_time') }}" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-                        @error('end_time')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="space-x-4 flex">
-                        <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-lg shadow-sm text-black bg-customGreen hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Reserve
-                        </button>
-
-                        <a href="{{ route('reservation.show') }}" class="inline-flex items-center px-3 py-2 border border-transparent text-small font-medium rounded-lg shadow-sm text-black bg-indigo-300 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Your Reservations
-                        </a>
-                    </div>
-                </form>
+                @include('reservations.reservationForm')
             </div>
         </div>
     </section>
