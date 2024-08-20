@@ -1,62 +1,62 @@
 @php use Carbon\Carbon; @endphp
-<div class="bg-white border border-gray-300 rounded-lg shadow-md p-4 w-full max-w-lg overflow-x-auto">
-    <!-- Date Selection Form -->
-    <form method="GET" action="{{ route('reservation.index') }}">
-        <label for="date" class="block text-sm font-medium text-gray-700 mb-2">Select a Date</label>
-        <select name="date" id="date" class="p-2 border border-gray-300 rounded-md mb-4">
-            @foreach($datesForWeek as $availableDate)
-                <option value="{{ $availableDate }}" {{ $availableDate == $date ? 'selected' : '' }}>
-                    {{ \Carbon\Carbon::parse($availableDate)->format('l, F j, Y') }}
-                </option>
-            @endforeach
-        </select>
-        <input type="submit" class="bg-blue-500 text-white px-4 py-2 rounded" value="Show Slots">
-    </form>
 
+@include('reservations.dates', ['slot' => $slot1])
 
-    <!-- Slots Table -->
-    <table class="w-full bg-white border-collapse text-sm mt-4">
-        <thead class="bg-gray-100">
+<table class="w-full bg-white border-collapse text-sm mt-4">
+    <thead class="bg-gray-100">
+    <tr>
+        @foreach($courtNumbers as $courtNumber)
+            <th class="border border-gray-300 px-2 py-1 text-center " colspan="2">Court {{ $courtNumber }}</th>
+        @endforeach
+    </tr>
+    </thead>
+    <tbody>
+    @php
+        $courts = $allSlotsReal;
+    @endphp
+    @foreach ($courts[0]['allSlots'] as $index => $slot)
         <tr>
-            @foreach($courtNumbers as $courtNumber)
-                <th class="border border-gray-300 px-2 py-1 text-center " colspan="2">Court {{ $courtNumber }}</th>
+            @foreach ($courts as $court)
+                    @php
+                        $currentSlot = $court['allSlots'][$index];
+                        if($index < count($court['allSlots']) - 1)
+                        $nextSlot = $court['allSlots'][$index+1];
+//
+                    @endphp
+                @php
+                    $start = Carbon::parse($currentSlot['start']);
+                    $start = $start->copy()->addMinutes(30);
+                    $end = $start->copy()->addMinutes(30);
+                @endphp
+                @if($index%2==0)
+                    <td class="border border-gray-300 px-2 py-1 text-center {{ $currentSlot['reserved'] ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                        @if ($currentSlot['reserved'])
+                            {{ 'RESERVED' }}
+                        @else
+                            <a href="/reservations/create" class="bg-green-500 hover:bg-green-600 text-white">
+                                {{ $currentSlot['start'] . '-' . $currentSlot['end'] }}
+                            </a>
+                        @endif
+                    </td>
+                    <td class="border border-gray-300 px-2 py-1 text-center {{ $nextSlot['reserved'] ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                        @if ($nextSlot['reserved'])
+                            {{ 'RESERVED' }}
+                        @else
+                            <a href="/reservations/create" class="bg-green-500 hover:bg-green-600 text-white">
+                                {{ $currentSlot['start'] . '-' . $currentSlot['end'] }}
+                            </a>
+                        @endif
+                    </td>
+                @endif
             @endforeach
         </tr>
-        </thead>
-        <tbody>
-        @php
-            $courts = [$allSlotsReal[0], $allSlotsReal[1], $allSlotsReal[2]];
-        @endphp
-        @foreach ($courts[0]['allSlots'] as $index => $slot)
-            <tr>
-                @foreach ($courts as $court)
+    @endforeach
+    </tbody>
+</table>
 
-                        @php
-                            $currentSlot = $court['allSlots'][$index];
-                        @endphp
-                    @php
-                        $start = Carbon::parse($currentSlot['start']);
-                        $start = $start->copy()->addMinutes(30);
-                        $end = $start->copy()->addMinutes(30)
-                    @endphp
-                @if($index%2==0)
 
-                        <td class="border border-gray-300 px-2 py-1 text-center {{ $currentSlot['reserved'] ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-                            {{ $currentSlot['reserved'] ? 'RESERVED' : $currentSlot['start'] . '-' . $currentSlot['end'] }}
-                        </td>
-                        <td class="border border-gray-300 px-2 py-1 text-center {{ $currentSlot['reserved'] ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
-                            {{ $currentSlot['reserved'] ? 'RESERVED' : $start->format('H:i') . '-' . $end->format('H:i') }}
-                        </td>
 
-                    @endif
-
-                @endforeach
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
-
-</div>
+{{--</div>--}}
 
 {{-- Code below is commented out, so no changes are made to it --}}
 
@@ -100,12 +100,12 @@
 {{--     </div> --}}
 {{-- </div> --}}
 
-{{-- <script> --}}
-{{--     document.getElementById('dropdownButton').addEventListener('click', function() { --}}
-{{--         const menu = document.getElementById('dropdownMenu'); --}}
-{{--         menu.classList.toggle('hidden'); --}}
-{{--     }); --}}
-{{-- </script> --}}
+{{-- <script>--}}
+{{--     document.getElementById('dropdownButton').addEventListener('click', function() {--}}
+{{--         const menu = document.getElementById('dropdownMenu');--}}
+{{--         menu.classList.toggle('hidden');--}}
+{{--     });--}}
+{{-- </script>--}}
 
 {{-- <!-- Reservations --> --}}
 {{-- <div class="w-full max-w-2xl bg-white shadow-md rounded-lg mb-6"> --}}
