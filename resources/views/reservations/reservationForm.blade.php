@@ -3,6 +3,7 @@
     @csrf
 
     <div class="mb-4 " style="margin-top: 3rem">
+
         <label for="court_id" class="block text-sm font-medium text-gray-700">Select Court</label>
         <select name="court_id" id="court_id" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
             <option value="" disabled selected>Select a court</option>
@@ -36,7 +37,10 @@
 
     <div class="mb-4">
         <label for="start_time" class="block text-sm font-medium text-gray-700">Start Time</label>
-        <input type="time" name="start_time" id="start_time" value="{{ $startTime }}" step="1800" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+        <input type="time" name="start_time" id="start_time" value="{{ $startTime }}"
+               min="07:00"
+               max="21:00"
+               step="1800" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
 
         @error('start_time')
         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -45,7 +49,10 @@
 
     <div class="mb-4">
         <label for="end_time" class="block text-sm font-medium text-gray-700">End Time</label>
-        <input type="time" name="end_time" id="end_time" value="{{ $endTime }}" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+        <input type="time" name="end_time" id="end_time" value="{{ $endTime }}"
+               min="08:00"
+               max="22:00"
+               class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
         @error('end_time')
         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
         @enderror

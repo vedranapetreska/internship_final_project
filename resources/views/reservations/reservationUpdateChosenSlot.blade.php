@@ -24,7 +24,7 @@
                 @if ($currentSlot['reserved'])
                     {{ 'RESERVED' }}
                 @else
-                    <a href="/reservations/create?court_number={{ $courtNumber }}&date={{ $date }}&start_time={{ $currentSlot['start'] }}&end_time={{ $nextSlot['end'] }}" class="bg-green-500 hover:bg-green-600 text-white">
+                    <a href="{{route('reservation.edit', $reservation->id)}}?court_number={{ $courtNumber }}&date={{ $date }}&start_time={{ $currentSlot['start'] }}&end_time={{ $nextSlot['end'] }}" class="bg-green-500 hover:bg-green-600 text-white">
                         {{ $currentSlot['start'] . '-' . $currentSlot['end'] }}
                     </a>
                 @endif
@@ -34,8 +34,8 @@
                     @if ($nextSlot['reserved'])
                         {{ 'RESERVED' }}
                     @else
-                        <a href="/reservations/create?court_number={{ $courtNumber }}&date={{ $date }}&start_time={{ $nextSlot['start'] }}&end_time={{ $nextNextSlot['end'] }}" class="bg-green-500 hover:bg-green-600 text-white">
-                            {{ $nextSlot['start'] . '-' . $nextSlot['end'] }}
+                        <a href="{{route('reservation.edit', $reservation->id)}}?court_number={{ $courtNumber }}&date={{ $date }}&start_time={{ $currentSlot['start'] }}&end_time={{ $nextSlot['end'] }}" class="bg-green-500 hover:bg-green-600 text-white">
+                            {{ $currentSlot['start'] . '-' . $currentSlot['end'] }}
                         </a>
                     @endif
                 </td>
