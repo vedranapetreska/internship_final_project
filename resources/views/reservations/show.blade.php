@@ -15,22 +15,28 @@
                     <th class="px-4 py-2">Start Time</th>
                     <th class="px-4 py-2">End Time</th>
                     <th class="px-4 py-2">Date</th>
+                    <th class="px-4 py-2">Status</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach($reservations as $reservation)
-                    <tr>
-                        <td class="border px-4 py-2 hover:bg-gray-50">
+                    <tr class="hover:bg-gray-100">
+                        <td class="border px-4 py-2">
                             <a href="{{ route('reservation.edit', $reservation->id) }}?court_number={{$reservation->court->court_number}}&start_time={{$reservation->start_time}}&end_time={{ $reservation->end_time}}&date={{$reservation->date}}" class="block w-full h-full"> {{ $reservation->court->court_number }} </a>
                         </td>
-                        <td class="border px-4 py-2 hover:bg-gray-50">
+                        <td class="border px-4 py-2">
                             <a href="{{ route('reservation.edit', $reservation->id) }}?court_number={{$reservation->court->court_number}}&start_time={{$reservation->start_time}}&end_time={{ $reservation->end_time}}&date={{$reservation->date}}" class="block w-full h-full"> {{ $reservation->start_time }} </a>
                         </td>
-                        <td class="border px-4 py-2 hover:bg-gray-50">
+                        <td class="border px-4 py-2">
                             <a href="{{ route('reservation.edit', $reservation->id) }}?court_number={{$reservation->court->court_number}}&start_time={{$reservation->start_time}}&end_time={{ $reservation->end_time}}&date={{$reservation->date}}" class="block w-full h-full"> {{ $reservation->end_time }} </a>
                         </td>
-                        <td class="border px-4 py-2 hover:bg-gray-50">
+                        <td class="border px-4 py-2">
                             <a href="{{ route('reservation.edit', $reservation->id) }}?court_number={{$reservation->court->court_number}}&start_time={{$reservation->start_time}}&end_time={{ $reservation->end_time}}&date={{$reservation->date}}" class="block w-full h-full"> {{ $reservation->date }} </a>
+                        </td>
+                        <td class="border px-4 py-2">
+                            <a href="{{ route('reservation.edit', $reservation->id) }}?court_number={{$reservation->court->court_number}}&start_time={{$reservation->start_time}}&end_time={{ $reservation->end_time}}&date={{$reservation->date}}"
+                             class="block w-full {{ $reservation->status == 'approved' ? 'text-green-600 font-bold' : '' }} {{ $reservation->status == 'pending' ? 'text-yellow-400 font-bold' : ''}}">
+                                {{ $reservation->status }} </a>
                         </td>
                     </tr>
                 @endforeach

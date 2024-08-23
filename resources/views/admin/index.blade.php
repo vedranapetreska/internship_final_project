@@ -1,11 +1,18 @@
 <x-app-layout>
     @include('layouts.navigation')
-    <section class="relative min-h-screen flex items-center justify-center bg-gray-400" style="margin-top: 2rem">
-        <div class="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg" style="flex-direction: column">
+    <section class="relative min-h-screen flex items-center justify-center bg-white" style="margin-top: 2rem">
+        <div class="mt-4">
             <h1 class="text-3xl font-bold mb-6 text-gray-900">Reservations</h1>
             <p class="mb-4 text-gray-700 text-sm font-medium">
                 <span class="font-bold text-indigo-600">Note:</span> Click on a reservation below if you want to change it.
             </p>
+
+            <!-- Calendar Form -->
+            <form action="{{ route('admin.index') }}" method="GET" class="mb-4">
+                <label for="date" class="text-gray-700 font-medium">Select Date:</label>
+                <input type="date" id="date" name="date" value="{{ request('date') }}" class="border rounded-lg p-2 w-full">
+                <button type="submit" class="mt-2 bg-indigo-600 text-white p-2 rounded-lg">Show Reservations</button>
+            </form>
 
             <table class="table-auto w-full bg-white rounded-lg shadow-md">
                 <thead class="bg-orange-300 text-white">
@@ -21,14 +28,30 @@
                 </thead>
                 <tbody>
                 @foreach($reservations as $reservation)
-                    <tr>
-                        <td>{{ $reservation->user->name }}</td>
-                        <td>{{ $reservation->user->email }}</td>
-                        <td>{{ $reservation->court->court_number }}</td>
-                        <td>{{ $reservation->date }}</td>
-                        <td>{{ $reservation->start_time }}</td>
-                        <td>{{ $reservation->end_time }}</td>
-                        <td>{{ $reservation->status }}</td>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border px-4 py-2">
+                            {{ $reservation->user->name }}
+                        </td>
+                        <td class="border px-4 py-2">
+                            {{ $reservation->user->email }}
+                        </td>
+                        <td class="border px-4 py-2">
+                            {{ $reservation->court->court_number }}
+                        </td>
+                        <td class="border px-4 py-2">
+                            {{ $reservation->date }}
+                        </td>
+                        <td class="border px-4 py-2">
+                            {{ $reservation->start_time }}
+                        </td>
+                        <td class="border px-4 py-2">
+                            {{ $reservation->end_time }}
+                        </td>
+                        <td class="border px-4 py-2">
+                            <p class=" block w-full {{ $reservation->status == 'approved' ? 'text-green-600 font-bold' : ' ' }}">
+                                {{ $reservation->status }}
+                            </p>
+                        </td>
                     </tr>
                 @endforeach
                 </tbody>
@@ -37,4 +60,3 @@
     </section>
     <x-footer></x-footer>
 </x-app-layout>
-
