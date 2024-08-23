@@ -1,4 +1,14 @@
 @php use Carbon\Carbon; @endphp
+<style>
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        display: none;
+    }
+
+    input[type="time"]::-webkit-inner-spin-button,
+    input[type="time"]::-webkit-clear-button {
+        display: none;
+    }
+</style>
 <form action="{{ route('reservation.store') }}" method="POST">
     @csrf
 
@@ -37,16 +47,6 @@
 
     <div class="mb-4">
         <label for="start_time" class="block text-sm font-medium text-gray-700">Start Time</label>
-        <style>
-            input[type="time"]::-webkit-calendar-picker-indicator {
-                display: none;
-            }
-
-            input[type="time"]::-webkit-inner-spin-button,
-            input[type="time"]::-webkit-clear-button {
-                display: none;
-            }
-        </style>
         <input type="time" name="start_time" id="start_time"  value="{{ $startTime }}"
                min="07:00"
                max="21:00"
@@ -61,7 +61,7 @@
         <input type="time" name="end_time" id="end_time" value="{{ $endTime }}"
                min="08:00"
                max="22:00"
-               class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+               step="1800" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
         @error('end_time')
         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
         @enderror

@@ -1,4 +1,14 @@
 <x-app-layout>
+    <style>
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            display: none;
+        }
+
+        input[type="time"]::-webkit-inner-spin-button,
+        input[type="time"]::-webkit-clear-button {
+            display: none;
+        }
+    </style>
     @include('layouts.navigation')
     <section class="relative min-h-screen flex items-center justify-center bg-gray-400" style="margin-top:2rem">
         <div style="display: flex;flex-direction: column">
@@ -59,7 +69,11 @@
 
                     <div class="mb-5">
                         <label for="start_time" class="block text-sm font-medium text-gray-700">Start Time</label>
-                        <input type="time" name="start_time" value="{{ $startTime }}" id="start_time" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                        <input type="time" name="start_time" value="{{ $startTime }}" id="start_time"
+                               min="08:00"
+                               max="22:00"
+                               step="1800"
+                               class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
                         @error('start_time')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -67,7 +81,11 @@
 
                     <div class="mb-5">
                         <label for="end_time" class="block text-sm font-medium text-gray-700">End Time</label>
-                        <input type="time" name="end_time" value="{{ $endTime }}" id="end_time" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                        <input type="time" name="end_time" value="{{ $endTime }}" id="end_time"
+                               min="08:00"
+                               max="22:00"
+                               step="1800"
+                               class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
                         @error('end_time')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
