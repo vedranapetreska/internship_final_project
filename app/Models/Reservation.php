@@ -9,7 +9,9 @@ class Reservation extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id', 'court_id', 'date', 'start_time', 'end_time', 'status',
+    ];
 
     public function Court(){
         return $this->belongsTo(Court::class);

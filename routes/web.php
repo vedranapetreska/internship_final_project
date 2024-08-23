@@ -19,6 +19,10 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/reservations/{reservation}', [ReservationController::class, 'update'])->name('reservation.update');
 });
 
+Route::middleware(['admin'])->group(function () {
+    Route::get('/admin/index', [\App\Http\Controllers\AdminController::class, 'index'])->name('admin.index');
+});
+
 
 
 
