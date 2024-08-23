@@ -20,21 +20,21 @@
 //
         @endphp
         <tr>
-            <td class="border border-gray-300 px-2 py-1 text-center {{ $currentSlot['reserved'] ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+            <td class="border border-gray-300 px-2 py-1 text-center {{ $currentSlot['reserved'] ? 'bg-red-400 text-white' : 'bg-green-500 text-white' }}">
                 @if ($currentSlot['reserved'])
                     {{ 'RESERVED' }}
                 @else
-                    <a href="{{route('reservation.edit', $reservation->id)}}?court_number={{ $courtNumber }}&date={{ $date }}&start_time={{ $currentSlot['start'] }}&end_time={{ $nextSlot['end'] }}" class="bg-green-500 hover:bg-green-600 text-white">
+                    <a href="{{route('reservation.edit', $reservation->id)}}?court_number={{ $courtNumber }}&date={{ $date }}&start_time={{ $currentSlot['start'] }}&end_time={{ $nextSlot['end'] }}" class="block w-full bg-green-500 hover:bg-green-600 text-white">
                         {{ $currentSlot['start'] . '-' . $currentSlot['end'] }}
                     </a>
                 @endif
             </td>
 
-                <td class="border border-gray-300 px-2 py-1 text-center {{ $nextSlot['reserved'] ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                <td class="border border-gray-300 px-2 py-1 text-center {{ $nextSlot['reserved'] ? 'bg-red-400 text-white' : 'bg-green-500 text-white' }}">
                     @if ($nextSlot['reserved'])
                         {{ 'RESERVED' }}
                     @else
-                        <a href="{{route('reservation.edit', $reservation->id)}}?court_number={{ $courtNumber }}&date={{ $date }}&start_time={{ $currentSlot['start'] }}&end_time={{ $nextSlot['end'] }}" class="bg-green-500 hover:bg-green-600 text-white">
+                        <a href="{{route('reservation.edit', $reservation->id)}}?court_number={{ $courtNumber }}&date={{ $date }}&start_time={{ $currentSlot['start'] }}&end_time={{ $nextSlot['end'] }}" class="block w-full bg-green-500 hover:bg-green-600 text-white">
                             {{ $currentSlot['start'] . '-' . $currentSlot['end'] }}
                         </a>
                     @endif

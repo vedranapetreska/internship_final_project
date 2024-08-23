@@ -10,7 +10,7 @@
     <thead class="bg-gray-100">
     <tr>
         @foreach($courtNumbers as $courtNumber)
-            <th class="border border-gray-300 px-2 py-1 text-center " colspan="2">Court {{ $courtNumber }}</th>
+            <th class="border border-gray-300 px-2 py-1 text-center {{ $loop->first ? '' : 'border-l-4' }}" colspan="2">Court {{ $courtNumber }}</th>
         @endforeach
     </tr>
     </thead>
@@ -36,20 +36,20 @@
                     $end = $start->copy()->addMinutes(30);
                 @endphp
                 @if($index%2==0)
-                    <td class="border border-gray-300 px-2 py-1 text-center {{ $currentSlot['reserved'] ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                    <td class="border border-gray-300 px-2 py-1 text-center shadow-lg {{ $currentSlot['reserved'] ? 'bg-red-400 text-white' : 'bg-green-500 text-white'}} {{ $loop->first ? '' : 'border-l-4' }}">
                         @if ($currentSlot['reserved'])
                             {{ 'RESERVED' }}
                         @else
-                            <a href="{{route('reservation.create')}}?court_number={{$court['court_number']}}&date={{$date}}&start_time={{$currentSlot['start']}}&end_time={{$nextSlot['end']}}" class="bg-green-500 hover:bg-green-600 text-white">
+                            <a href="{{route('reservation.create')}}?court_number={{$court['court_number']}}&date={{$date}}&start_time={{$currentSlot['start']}}&end_time={{$nextSlot['end']}}" class=" block w-full bg-green-500 hover:bg-green-600 text-white">
                                 {{ $currentSlot['start'] . '-' . $currentSlot['end'] }}
                             </a>
                         @endif
                     </td>
-                    <td class="border border-gray-300 px-2 py-1 text-center {{ $nextSlot['reserved'] ? 'bg-red-500 text-white' : 'bg-green-500 text-white' }}">
+                    <td class="border border-gray-300 px-2 py-1 text-center shadow-lg {{ $nextSlot['reserved'] ? 'bg-red-400 text-white' : 'bg-green-500 text-white'}}">
                         @if ($nextSlot['reserved'])
                             {{ 'RESERVED' }}
                         @else
-                            <a href="{{route('reservation.create')}}?court_number={{$court['court_number']}}&date={{$date}}&start_time={{$nextSlot['start']}}&end_time={{$nextNextSlot['end']}}" class="bg-green-500 hover:bg-green-600 text-white">
+                            <a href="{{route('reservation.create')}}?court_number={{$court['court_number']}}&date={{$date}}&start_time={{$nextSlot['start']}}&end_time={{$nextNextSlot['end']}}" class="block w-full bg-green-500 hover:bg-green-600 text-white">
                                 {{ $nextSlot['start'] . '-' . $nextSlot['end'] }}
                             </a>
                         @endif
