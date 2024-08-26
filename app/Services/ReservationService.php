@@ -14,71 +14,51 @@ class ReservationService
         $this->timeSlotService = $timeSlotService;
     }
 
-    public function getAvailableSlots($date){
-
+    public function getAvailableSlots($date)
+    {
         $startTime = '07:00';
-        $endTime = '22:00';
+        $endTime = '23:00';
         $allSlots = $this->timeSlotService->generateTimeSlots($startTime, $endTime);
-        $reservedTimes = Reservation::where('date', $date)->get(['court_id', 'start_time', 'end_time']);
+        $reservedTimes = Reservation::where('date', $date)
+            ->whereIn('status', ['approved', 'pending'])
+            ->get(['court_id', 'start_time', 'end_time', 'status']);
+
         $freeSlotsByCourt = [];
 
         $courts = Court::all();
         foreach ($courts as $court) {
-            $freeSlots = [];
             $courtReservedTimes = $reservedTimes->where('court_id', $court->id);
 
-
-            foreach ($allSlots as $slot) {
-                $isFree = true;
+            foreach ($allSlots as &$slot) {
+                $slot['status'] = 'free';  // Default to 'free'
                 foreach ($courtReservedTimes as $reserved) {
                     if ($this->timeSlotService->isOverlapping($slot, $reserved)) {
-                        $isFree = false;
+                        if ($reserved->status == 'pending') {
+                            $slot['status'] = 'pending';
+                        } elseif ($reserved->status == 'approved') {
+                            $slot['status'] = 'approved';
+                        }
                         break;
                     }
                 }
-                if ($isFree) {
-                    $freeSlots[] = $slot;
-                }
             }
+
             $freeSlotsByCourt[$court->id] = [
                 'court_number' => $court->court_number,
-                'slots' => $freeSlots,
-
+                'slots' => $allSlots,
             ];
         }
 
-        $allSlotsReal=[];
-        for ($i=1;$i<=3;$i++) {
-            $allSlotsReal[$i-1] = [
-                'court_number' => $i,
-                'allSlots' => $allSlots,
-            ];
-        }
-
-        foreach ($allSlotsReal as &$realSlot) {
-            foreach ($freeSlotsByCourt as $freeSlot) {
-                if ($realSlot['court_number'] == $freeSlot['court_number']) {
-                    foreach($realSlot['allSlots'] as &$slot) {
-                        if (!in_array($slot, $freeSlot['slots'])) {
-                            $slot['reserved']=true;
-                        }
-                        else {
-                            $slot['reserved'] = false;
-                        }
-                    }
-                }
-            }
-        }
         return [
-            'allSlots' => $allSlotsReal,
-            'freeSlots' => $freeSlotsByCourt,
+            'allSlots' => $freeSlotsByCourt,
         ];
     }
+
 
     public function handleReservation($date, $startTime, $endTime, $courtId){
 
         $overlapExists = Reservation::where('court_id', $courtId)
-            ->where('date', $date)
+            ->where('date', $date)->where('status', ['approved', 'pending'])
             ->where(function ($query) use ($startTime, $endTime) {
                 // Check if the reservation overlaps with the start time
                 $query->where(function ($query) use ($startTime, $endTime) {

@@ -35,7 +35,7 @@
                         </td>
                         <td class="border px-4 py-2">
                             <a href="{{ route('reservation.edit', $reservation->id) }}?court_number={{$reservation->court->court_number}}&start_time={{$reservation->start_time}}&end_time={{ $reservation->end_time}}&date={{$reservation->date}}"
-                             class="block w-full {{ $reservation->status == 'approved' ? 'text-green-600 font-bold' : '' }} {{ $reservation->status == 'pending' ? 'text-yellow-400 font-bold' : ''}}">
+                             class="block w-full {{ $reservation->status == 'approved' ? 'text-green-600 font-bold' : '' }} {{ $reservation->status == 'pending' ? 'text-yellow-400 font-bold' : ''}}  {{ $reservation->status == 'denied' ? 'text-red-400 font-bold' : ''}}">
                                 {{ $reservation->status }} </a>
                         </td>
                     </tr>

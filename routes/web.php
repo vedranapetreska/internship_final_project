@@ -21,6 +21,9 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['admin'])->group(function () {
     Route::get('/admin/index', [\App\Http\Controllers\AdminController::class, 'index'])->name('admin.index');
+    Route::post('/admin/approve-reservation/{id}', [\App\Http\Controllers\AdminController::class, 'approveReservation'])->name('admin.approveReservation');
+    Route::post('/admin/deny-reservation/{id}', [\App\Http\Controllers\AdminController::class, 'denyReservation'])->name('admin.denyReservation');
+
 });
 
 

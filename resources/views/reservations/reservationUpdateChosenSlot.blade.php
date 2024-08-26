@@ -6,23 +6,25 @@
     </thead>
     <tbody>
     @php
-        $court = $allSlotsReal[$courtNumber-1]; // Get the selected court's data
+        $court = $allSlotsReal[$courtNumber]; // Get the selected court's data
     @endphp
-    @foreach ($court['allSlots'] as $index => $slot)
+    @foreach ($court['slots'] as $index => $slot)
         @if ($index % 2 == 0) <!-- This condition ensures that slots are paired -->
         @php
-            $currentSlot = $court['allSlots'][$index];
-            if($index < count($court['allSlots']) - 1)
-            $nextSlot = $court['allSlots'][$index+1];
+            $currentSlot = $court['slots'][$index];
+            if($index < count($court['slots']) - 1)
+                $nextSlot = $court['slots'][$index+1];
 
-            if($index < count($court['allSlots']) - 2)
-            $nextNextSlot = $court['allSlots'][$index+2]
-//
+            if($index < count($court['slots']) - 2)
+                $nextNextSlot = $court['slots'][$index+2]
+
         @endphp
         <tr>
-            <td class="border border-gray-300 px-2 py-1 text-center {{ $currentSlot['reserved'] ? 'bg-red-400 text-white' : 'bg-green-500 text-white' }}">
-                @if ($currentSlot['reserved'])
+            <td class="border border-gray-300 px-2 py-1 text-center {{ $currentSlot['status'] == 'approved' ? 'bg-red-400 text-white' : ($currentSlot['status'] == 'pending' ? 'bg-yellow-400 text-white' : 'bg-green-500 text-white') }}">
+                @if ($currentSlot['status'] == 'approved')
                     {{ 'RESERVED' }}
+                @elseif ($currentSlot['status'] == 'pending')
+                    {{ 'PENDING' }}
                 @else
                     <a href="{{route('reservation.edit', $reservation->id)}}?court_number={{ $courtNumber }}&date={{ $date }}&start_time={{ $currentSlot['start'] }}&end_time={{ $nextSlot['end'] }}" class="block w-full bg-green-500 hover:bg-green-600 text-white">
                         {{ $currentSlot['start'] . '-' . $currentSlot['end'] }}
@@ -30,9 +32,11 @@
                 @endif
             </td>
 
-                <td class="border border-gray-300 px-2 py-1 text-center {{ $nextSlot['reserved'] ? 'bg-red-400 text-white' : 'bg-green-500 text-white' }}">
-                    @if ($nextSlot['reserved'])
+                <td class="border border-gray-300 px-2 py-1 text-center  {{ $nextSlot['status'] == 'approved' ? 'bg-red-400 text-white' : ($nextSlot['status'] == 'pending' ? 'bg-yellow-400 text-white' : 'bg-green-500 text-white') }}">
+                    @if ($nextSlot['status'] == 'approved')
                         {{ 'RESERVED' }}
+                    @elseif ($nextSlot['status'] == 'pending')
+                        {{ 'PENDING' }}
                     @else
                         <a href="{{route('reservation.edit', $reservation->id)}}?court_number={{ $courtNumber }}&date={{ $date }}&start_time={{ $currentSlot['start'] }}&end_time={{ $nextSlot['end'] }}" class="block w-full bg-green-500 hover:bg-green-600 text-white">
                             {{ $currentSlot['start'] . '-' . $currentSlot['end'] }}

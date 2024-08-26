@@ -36,7 +36,6 @@ class ReservationController extends Controller
 
         $availableSlots = $this->reservationService->getAvailableSlots($date);
         $allSlotsReal = $availableSlots['allSlots'];
-
         // Pass the reservedSlots to the view
         return view('reservations.index', compact('reservations', 'courtNumbers', 'date', 'datesForWeek', 'allSlotsReal'));
     }
@@ -73,11 +72,18 @@ class ReservationController extends Controller
         $now = Carbon::now();
         $oneWeekLater = $now->copy()->addWeek();
         $startDateTime = Carbon::parse($request->input('date') . ' ' . $request->input('start_time'));
+        $endDateTime = Carbon::parse($request->input('date') . ' ' . $request->input('end_time'));
 
-        if ($startDateTime->isPast()) {
+        if ($startDateTime->isPast() || $endDateTime->isPast()) {
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'The reservation time must be in the future.');
+        }
+
+        if ($now->between($startDateTime, $endDateTime)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'The current time is within the selected reservation time. Please choose a different time.');
         }
 
         if ($startDateTime->greaterThan($oneWeekLater)) {
@@ -98,12 +104,14 @@ class ReservationController extends Controller
                 ->with('error', 'The selected time slot overlaps with an existing reservation.');
         }
 
+
         Reservation::create([
             'user_id' => Auth::id(),
             'court_id' => $courtId,
             'start_time' => $startTime,
             'end_time' => $endTime,
-            'date' => $date
+            'date' => $date,
+
         ]);
 
         return redirect()->route('reservation.show')->with('success', 'Reservation made successfully!');

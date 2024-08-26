@@ -17,7 +17,7 @@ class TimeSlotService
             $slots[] = [
                 'start' => $current->format('H:i'),
                 'end' => $current->copy()->addMinutes($intervalMinutes)->format('H:i'),
-                'reserved'=>false
+                'status' => ['free']
             ];
             $current->addMinutes($intervalMinutes);
         }
