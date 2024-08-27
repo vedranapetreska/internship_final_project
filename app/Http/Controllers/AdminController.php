@@ -21,13 +21,16 @@ class AdminController extends Controller
     {
         $now = Carbon::now();
         $today = $now->format('Y-m-d');
-        $date = $request->input('date',$today);
+        $date = $request->input('date');
         $status=$request->input('status');
         $datesForWeek = $this->reservationService->generateDatesForWeek($now);
 
         $reservations = Reservation::with('user', 'court')
-            ->where('date',$date)
-            ->get();
+            ->orderBy('start_time')->get();
+
+        if($date){
+            $reservations = $reservations->where('date',$date);
+        }
 
         if($status){
             $reservations = $reservations->where('status',$status);
@@ -49,5 +52,11 @@ class AdminController extends Controller
         $reservation->save();
 
         return redirect()->route('admin.index')->with('success', 'Reservation approved');
+    }
+
+    public function deleteReservation($id){
+        $reservation = Reservation::find($id);
+        $reservation->delete();
+        return redirect()->route('admin.index')->with('success', 'Reservation deleted');
     }
 }

@@ -58,6 +58,15 @@
                             </form>
                         </x-slot>
                     </x-dropdown>
+
+                    <!-- Admin Panel Link -->
+                    @if(auth()->user() && auth()->user()->role === 'admin')
+                        <div class="ms-4">
+                            <x-nav-link href="{{ route('admin.index') }}" :active="request()->routeIs('admin.index')" title="Admin Panel">
+                                <i class="fas fa-user-shield"></i>
+                            </x-nav-link>
+                        </div>
+                    @endif
                 @else
                     <!-- Login and Registration Links for Guests -->
                     <div class="rounded-md px-3 py-1 text-black transition hover:text-gray-300 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-gray-300 dark:focus-visible:ring-white">

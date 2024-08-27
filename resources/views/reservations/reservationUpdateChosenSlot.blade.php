@@ -1,3 +1,4 @@
+@php use Carbon\Carbon; @endphp
 <table class="w-full bg-white border-collapse text-sm mt-4">
     <thead class="bg-gray-100">
     <tr>
@@ -6,7 +7,10 @@
     </thead>
     <tbody>
     @php
-        $court = $allSlotsReal[$courtNumber]; // Get the selected court's data
+        $now = Carbon::now();
+        $selectedDate = Carbon::parse($date);
+        $isToday = $selectedDate->isToday();
+        $court = $allSlotsReal[$courtNumber];
     @endphp
     @foreach ($court['slots'] as $index => $slot)
         @if ($index % 2 == 0) <!-- This condition ensures that slots are paired -->
@@ -16,10 +20,14 @@
                 $nextSlot = $court['slots'][$index+1];
 
             if($index < count($court['slots']) - 2)
-                $nextNextSlot = $court['slots'][$index+2]
+                $nextNextSlot = $court['slots'][$index+2];
+
+            $start = Carbon::parse($currentSlot['start']);
+
 
         @endphp
-        <tr>
+        @if ($index % 2 == 0 && (!$isToday || ($isToday && $start->greaterThan($now))))
+            <tr>
             <td class="border border-gray-300 px-2 py-1 text-center {{ $currentSlot['status'] == 'approved' ? 'bg-red-400 text-white' : ($currentSlot['status'] == 'pending' ? 'bg-yellow-400 text-white' : 'bg-green-500 text-white') }}">
                 @if ($currentSlot['status'] == 'approved')
                     {{ 'RESERVED' }}
@@ -44,6 +52,7 @@
                     @endif
                 </td>
         </tr>
+        @endif
         @endif
     @endforeach
     </tbody>

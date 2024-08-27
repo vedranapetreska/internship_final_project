@@ -10,7 +10,7 @@
         $now = Carbon::now();
         $selectedDate = Carbon::parse($date);
         $isToday = $selectedDate->isToday();
-        $court = $allSlotsReal[$courtNumber]; // Get the selected court's data
+        $court = $allSlotsReal[$courtNumber];
     @endphp
     @foreach ($court['slots'] as $index => $slot)
         @php
@@ -20,6 +20,9 @@
 
             if($index < count($court['slots']) - 2)
                 $nextNextSlot = $court['slots'][$index+2];
+
+            $start = Carbon::parse($currentSlot['start']);
+
 
         @endphp
         @if ($index % 2 == 0 && (!$isToday || ($isToday && $start->greaterThan($now))))

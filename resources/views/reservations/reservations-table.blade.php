@@ -35,8 +35,8 @@
                     @endphp
                 @php
                     $start = Carbon::parse($currentSlot['start']);
-                    $start = $start->copy()->addMinutes(30);
-                    $end = $start->copy()->addMinutes(30);
+//                    $start = $start->copy()->addMinutes(30);
+//                    $end = $start->copy()->addMinutes(30);
                     $today = Carbon::today();
                 @endphp
                 @if($index % 2 == 0 && (!$isToday || ($isToday && $start->greaterThan($now))))
@@ -51,21 +51,18 @@
                             </a>
                         @endif
                     </td>
-                    @if ($nextSlot && (!$isToday || ($isToday && $end->greaterThan($now))))
-                        <td class="border border-gray-300 px-2 py-1 text-center shadow-lg {{ $nextSlot['status'] == 'approved' ? 'bg-red-400 text-white' : ($nextSlot['status'] == 'pending' ? 'bg-yellow-400 text-white' : 'bg-green-500 text-white') }}">
-                            @if ($nextSlot['status'] == 'approved')
-                                {{ 'RESERVED' }}
-                            @elseif ($nextSlot['status'] == 'pending')
-                                {{ 'PENDING' }}
-                            @else
-                                <a href="{{ route('reservation.create') }}?court_number={{ $court['court_number'] }}&date={{ $date }}&start_time={{ $nextSlot['start'] }}&end_time={{ $nextNextSlot['end'] }}" class="block w-full bg-green-500 hover:bg-green-600 text-white">
-                                    {{ $nextSlot['start'] . '-' . $nextSlot['end'] }}
-                                </a>
-                            @endif
-                        </td>
-                    @endif
+                    <td class="border border-gray-300 px-2 py-1 text-center shadow-lg {{ $nextSlot['status'] == 'approved' ? 'bg-red-400 text-white' : ($nextSlot['status'] == 'pending' ? 'bg-yellow-400 text-white' : 'bg-green-500 text-white') }}">
+                        @if ($nextSlot['status'] == 'approved')
+                            {{ 'RESERVED' }}
+                        @elseif ($nextSlot['status'] == 'pending')
+                            {{ 'PENDING' }}
+                        @else
+                            <a href="{{ route('reservation.create') }}?court_number={{ $court['court_number'] }}&date={{ $date }}&start_time={{ $nextSlot['start'] }}&end_time={{ $nextNextSlot['end'] }}" class="block w-full bg-green-500 hover:bg-green-600 text-white">
+                                {{ $nextSlot['start'] . '-' . $nextSlot['end'] }}
+                            </a>
+                        @endif
+                    </td>
                 @endif
-
             @endforeach
         </tr>
     @endforeach
