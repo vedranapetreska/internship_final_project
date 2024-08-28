@@ -22,28 +22,33 @@ class AdminController extends Controller
         $now = Carbon::now();
         $today = $now->format('Y-m-d');
         $date = $request->input('date');
-        $status=$request->input('status');
+        $status = $request->input('status');
         $datesForWeek = $this->reservationService->generateDatesForWeek($now);
 
-        $reservations = Reservation::with('user', 'court')
-            ->orderBy('start_time')->get();
+        $reservationsQuery = Reservation::with('user', 'court');
 
-        if($date){
-            $reservations = $reservations->where('date',$date);
+        if ($date) {
+            $reservationsQuery->where('date', $date)
+                ->orderBy('start_time');
         }
 
-        if($status){
-            $reservations = $reservations->where('status',$status);
+        if ($status) {
+            $reservationsQuery->where('status', $status)
+                ->orderBy('date');
         }
+
+        $reservations = $reservationsQuery->paginate(10);
 
         return view('admin.index', compact('reservations', 'datesForWeek', 'date'));
     }
+
+
 
     public function approveReservation($id){
         $reservation = Reservation::find($id);
         $reservation->status = 'approved';
         $reservation->save();
-        return redirect()->route('admin.index')->with('success', 'Reservation approved');
+        return redirect()->route('admin.index');
     }
 
     public function denyReservation($id){
@@ -51,12 +56,12 @@ class AdminController extends Controller
         $reservation->status = 'denied';
         $reservation->save();
 
-        return redirect()->route('admin.index')->with('success', 'Reservation approved');
+        return redirect()->route('admin.index');
     }
 
     public function deleteReservation($id){
-        $reservation = Reservation::find($id);
+        $reservation = Reservation::findOrFail($id);
         $reservation->delete();
-        return redirect()->route('admin.index')->with('success', 'Reservation deleted');
+        return redirect()->route('admin.index');
     }
 }

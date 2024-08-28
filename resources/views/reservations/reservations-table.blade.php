@@ -62,6 +62,26 @@
                             </a>
                         @endif
                     </td>
+                @elseif($index % 2 == 0 )
+                    <td class="border border-gray-300 px-2 py-1 text-center shadow-lg  {{ $currentSlot['status'] == 'approved' ? 'bg-red-300 text-white' : ($currentSlot['status'] == 'pending' ? 'bg-yellow-300 text-white' : 'bg-green-400 text-white') }} {{ $loop->first ? '' : 'border-l-4' }}">
+                        @if ($currentSlot['status'] == 'approved')
+                            {{ 'RESERVED' }}
+                        @elseif ($currentSlot['status'] == 'pending')
+                            {{ 'PENDING' }}
+                        @else
+                            {{ $currentSlot['start'] . '-' . $currentSlot['end'] }}
+                        @endif
+                    </td>
+                    <td class="border border-gray-300 px-2 py-1 text-center shadow-lg {{ $nextSlot['status'] == 'approved' ? 'bg-red-300 text-white' : ($nextSlot['status'] == 'pending' ? 'bg-yellow-300 text-white' : 'bg-green-400 text-white') }}">
+                        @if ($nextSlot['status'] == 'approved')
+                            {{ 'RESERVED' }}
+                        @elseif ($nextSlot['status'] == 'pending')
+                            {{ 'PENDING' }}
+                        @else
+                            {{ $nextSlot['start'] . '-' . $nextSlot['end'] }}
+
+                        @endif
+                    </td>
                 @endif
             @endforeach
         </tr>

@@ -10,5 +10,5 @@
         <option value="denied" {{ request('status') == 'denied' ? 'selected' : '' }}>Denied</option>
     </select>
 
-    <button type="submit" class="mt-2 bg-indigo-600 text-white p-2 rounded-lg">Show Reservations</button>
+    <button type="submit" class="mt-2 bg-gray-400 hover:bg-gray-500 text-white p-2 rounded-lg">Show Reservations</button>
 </form>

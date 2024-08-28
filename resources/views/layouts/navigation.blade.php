@@ -9,8 +9,8 @@
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                @if (!auth()->check() || (auth()->check() && auth()->user()->role !== 'admin'))
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link href="{{ route('reservation.index') }}" :active="request()->routeIs('reservation.index')">
                         {{ __('Reservations') }}
                     </x-nav-link>
@@ -22,7 +22,9 @@
                         {{ __('Contact') }}
                     </x-nav-link>
                 </div>
+                @endif
             </div>
+
 
             <!-- Authentication Links -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -58,6 +60,7 @@
                             </form>
                         </x-slot>
                     </x-dropdown>
+                @endauth
 
                     <!-- Admin Panel Link -->
                     @if(auth()->user() && auth()->user()->role === 'admin')
@@ -66,13 +69,15 @@
                                 <i class="fas fa-user-shield"></i>
                             </x-nav-link>
                         </div>
-                    @endif
-                @else
+
+                     @else
+
                     <!-- Login and Registration Links for Guests -->
                     <div class="rounded-md px-3 py-1 text-black transition hover:text-gray-300 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-gray-300 dark:focus-visible:ring-white">
                         <x-login-registration></x-login-registration>
                     </div>
-                @endauth
+                    @endif
+
             </div>
 
             <!-- Hamburger -->

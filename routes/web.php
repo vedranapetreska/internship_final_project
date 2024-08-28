@@ -10,7 +10,7 @@ Route::get('/', function () {
 
 Route::get('/reservations/index', [\App\Http\Controllers\ReservationController::class, 'index'])->name('reservation.index');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','user'])->group(function () {
     Route::get('/reservations/create', [\App\Http\Controllers\ReservationController::class, 'create'])->name('reservation.create');
     Route::post('/reservations/store', [\App\Http\Controllers\ReservationController::class, 'store'])->name('reservation.store');
     Route::get('/reservations', [ReservationController::class, 'show'])->name('reservation.show');
@@ -19,7 +19,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/reservations/{reservation}', [ReservationController::class, 'update'])->name('reservation.update');
 });
 
-Route::middleware(['admin'])->group(function () {
+Route::middleware(['auth','admin'])->group(function () {
     Route::get('/admin/index', [\App\Http\Controllers\AdminController::class, 'index'])->name('admin.index');
     Route::post('/admin/approve-reservation/{id}', [\App\Http\Controllers\AdminController::class, 'approveReservation'])->name('admin.approveReservation');
     Route::post('/admin/deny-reservation/{id}', [\App\Http\Controllers\AdminController::class, 'denyReservation'])->name('admin.denyReservation');
@@ -28,12 +28,9 @@ Route::middleware(['admin'])->group(function () {
 });
 
 
-
-
-
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified','user'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

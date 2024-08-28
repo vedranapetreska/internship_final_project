@@ -2,7 +2,7 @@
 <x-app-layout>
     @include('layouts.navigation')
     <section class="relative min-h-screen flex items-center justify-center bg-gray-400" style="margin-top: 2rem">
-        <div class="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg">
+        <div class="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg">
             <h1 class="text-3xl font-bold mb-6 text-gray-900">Your Reservations</h1>
             <p class="mb-4 text-gray-700 text-sm font-medium">
                 <span class="font-bold text-indigo-600">Note:</span> Click on a reservation below if you want to change it.
@@ -37,6 +37,20 @@
                             <a href="{{ route('reservation.edit', $reservation->id) }}?court_number={{$reservation->court->court_number}}&start_time={{$reservation->start_time}}&end_time={{ $reservation->end_time}}&date={{$reservation->date}}"
                              class="block w-full {{ $reservation->status == 'approved' ? 'text-green-600 font-bold' : '' }} {{ $reservation->status == 'pending' ? 'text-yellow-400 font-bold' : ''}}  {{ $reservation->status == 'denied' ? 'text-red-400 font-bold' : ''}}">
                                 {{ $reservation->status }} </a>
+                        </td>
+                        <td>
+                            @if($reservation->status == 'pending')
+                            <form action="{{ route('reservation.destroy', $reservation->id) }}" method="POST"
+                                  class="inline"
+                                  onsubmit="return confirm('Are you sure you want to cancel this reservation?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="bg-red-500 text-white p-1 w-20 rounded-lg text-xs">
+                                    Cancel
+                                </button>
+                            </form>
+                            @endif
+
                         </td>
                     </tr>
                 @endforeach

@@ -7,6 +7,7 @@
             @include('admin.dates-status')
 
             @include('admin.reservations-table')
+
         </div>
     </section>
     <x-footer></x-footer>

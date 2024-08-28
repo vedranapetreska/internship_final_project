@@ -29,14 +29,13 @@ class ReservationController extends Controller
 
         $date = $request->input('date', $today);
 
-        // Fetch future reservations
         $reservations=Reservation::where('date','>=',$now)
             ->orderBy('date')
             ->orderBy('court_id')->get();
 
         $availableSlots = $this->reservationService->getAvailableSlots($date);
         $allSlotsReal = $availableSlots['allSlots'];
-        // Pass the reservedSlots to the view
+
         return view('reservations.index', compact('reservations', 'courtNumbers', 'date', 'datesForWeek', 'allSlotsReal'));
     }
 
@@ -46,6 +45,7 @@ class ReservationController extends Controller
         $date1 = Carbon::parse($request->query('date'))->format('Y-m-d');
         $startTime=Carbon::parse($request->query('start_time'))->format('H:i');
         $endTime=Carbon::parse($request->query('end_time'))->format('H:i');
+
 
         $courtNumbers = Court::pluck('court_number')->toArray();
         $now = Carbon::now();

@@ -30,7 +30,7 @@ class ReservationService
             $courtReservedTimes = $reservedTimes->where('court_id', $court->id);
 
             foreach ($allSlots as &$slot) {
-                $slot['status'] = 'free';  // Default to 'free'
+                $slot['status'] = 'free';
                 foreach ($courtReservedTimes as $reserved) {
                     if ($this->timeSlotService->isOverlapping($slot, $reserved)) {
                         if ($reserved->status == 'pending') {
