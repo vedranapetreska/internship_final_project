@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ReservationRequest;
+use App\Mail\NewReservation;
+use App\Mail\ReservationDenied;
 use App\Models\Court;
 use App\Models\Reservation;
 use App\Services\ReservationService;
@@ -11,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Carbon\Carbon;
 use App\Services\TimeSlotService;
+use Illuminate\Support\Facades\Mail;
 
 class ReservationController extends Controller
 {
@@ -92,6 +95,13 @@ class ReservationController extends Controller
                 ->with('error', 'The reservation time must be within one week from now.');
         }
 
+        $durationInMinutes = $startDateTime->diffInMinutes($endDateTime);
+        if ($durationInMinutes < 60) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'The reservation time must be at least 1 hour.');
+        }
+
         $startTime = $request->input('start_time');
         $endTime = $request->input('end_time');
         $courtId = $request->input('court_id');
@@ -105,14 +115,17 @@ class ReservationController extends Controller
         }
 
 
-        Reservation::create([
+        $reservation = Reservation::create([
             'user_id' => Auth::id(),
             'court_id' => $courtId,
             'start_time' => $startTime,
             'end_time' => $endTime,
             'date' => $date,
-
         ]);
+
+        Mail::to('tkprilep@gmail.com')->send(
+            new NewReservation($reservation)
+        );
 
         return redirect()->route('reservation.show')->with('success', 'Reservation made successfully!');
     }
@@ -164,7 +177,9 @@ class ReservationController extends Controller
         $oneWeekLater = $now->copy()->addWeek();
         $startDateTime = Carbon::parse($request->input('date') . ' ' . $request->input('start_time'));
 
-        if ($startDateTime->isPast()) {
+        $endDateTime = Carbon::parse($request->input('date') . ' ' . $request->input('end_time'));
+
+        if ($startDateTime->isPast() || $endDateTime->isPast()) {
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'The reservation time must be in the future.');
@@ -174,6 +189,13 @@ class ReservationController extends Controller
             return redirect()->back()
                 ->withInput($request->all())
                 ->with('error', 'The reservation time must be within one week from now.');
+        }
+
+        $durationInMinutes = $startDateTime->diffInMinutes($endDateTime);
+        if ($durationInMinutes < 60) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'The reservation time must be at least 1 hour.');
         }
 
         $startTime = $request->input('start_time');

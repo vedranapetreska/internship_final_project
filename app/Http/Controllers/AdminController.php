@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ReservationConfirmation;
+use App\Mail\ReservationDenied;
 use App\Models\Reservation;
 use App\Services\ReservationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 
 class AdminController extends Controller
@@ -44,21 +47,35 @@ class AdminController extends Controller
 
 
 
-    public function approveReservation($id){
+    public function approveReservation($id)
+    {
         $reservation = Reservation::find($id);
-        $reservation->status = 'approved';
-        $reservation->save();
+        if ($reservation) {
+            $reservation->status = 'approved';
+            $reservation->save();
+
+            Mail::to($reservation->user->email)->send(
+                new ReservationConfirmation($reservation)
+            );
+        }
+
         return redirect()->route('admin.index');
     }
 
-    public function denyReservation($id){
+    public function denyReservation($id)
+    {
         $reservation = Reservation::find($id);
-        $reservation->status = 'denied';
-        $reservation->save();
+        if ($reservation) {
+            $reservation->status = 'denied';
+            $reservation->save();
+
+            Mail::to($reservation->user->email)->send(
+                new ReservationDenied($reservation)
+            );
+        }
 
         return redirect()->route('admin.index');
     }
-
     public function deleteReservation($id){
         $reservation = Reservation::findOrFail($id);
         $reservation->delete();

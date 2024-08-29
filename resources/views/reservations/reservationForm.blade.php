@@ -67,7 +67,7 @@
         @enderror
     </div>
 
-    <div class="space-x-4 flex" style="margin-top:8rem;display: flex;justify-content: center;align-items: center">
+    <div class="space-x-4 flex" style="margin-top:7rem;display: flex;justify-content: center;align-items: center">
         <button type="submit" class="inline-flex items-center px-4 py-1 border border-transparent text-base font-medium rounded-lg shadow-sm text-black bg-customGreen hover:bg-green-900
          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" style="width:auto;height: 2.5rem">
             Reserve
