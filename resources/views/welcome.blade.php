@@ -21,29 +21,24 @@
             <div class="container mx-auto text-center">
                 <h3 class="text-3xl font-semibold mb-8">Our Services</h3>
                 <div class="flex flex-wrap justify-center">
+
                     <div class="w-full sm:w-1/2 lg:w-1/3 px-4 mb-8">
                         <div class="bg-gray-200 p-6 rounded-lg shadow-lg">
-                            <h4 class="text-xl font-bold mb-4">Court Booking</h4>
+                            <h4 class="text-xl font-bold mb-8">Court Booking</h4>
                             <p>Reserve your favorite court easily online.</p>
                         </div>
                     </div>
+
                     <div class="w-full sm:w-1/2 lg:w-1/3 px-4 mb-8">
                         <div class="bg-gray-200 p-6 rounded-lg shadow-lg">
-                            <h4 class="text-xl font-bold mb-4">Coaching Sessions</h4>
-                            <p>Sign up for professional coaching sessions to improve your game.</p>
-                        </div>
-                    </div>
-                    <div class="w-full sm:w-1/2 lg:w-1/3 px-4 mb-8">
-                        <div class="bg-gray-200 p-6 rounded-lg shadow-lg">
-                            <h4 class="text-xl font-bold mb-4">Tournaments</h4>
-                            <p>Participate in local tournaments and compete with others.</p>
+                            <h4 class="text-xl font-bold mb-4">Coffee Bar</h4>
+                            <p>Relax and enjoy a variety of coffee while watching the game. Our coffee bar offers a cozy atmosphere for you.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Call to Action -->
         <section class="bg-green-600 py-12 text-white">
             <div class="container mx-auto text-center">
                 <h3 class="text-3xl font-semibold mb-4">Ready to Play?</h3>
@@ -52,7 +47,6 @@
             </div>
         </section>
 
-        <!-- Footer -->
         <x-footer class="mt-auto"></x-footer>
     </div>
 </x-app-layout>
