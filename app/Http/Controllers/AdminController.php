@@ -79,6 +79,6 @@ class AdminController extends Controller
     public function deleteReservation($id){
         $reservation = Reservation::findOrFail($id);
         $reservation->delete();
-        return redirect()->route('admin.index');
+        return redirect()->back();
     }
 }

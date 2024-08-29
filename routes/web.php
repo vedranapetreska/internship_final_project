@@ -9,6 +9,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/about', function () {
+    return view('aboutUs');
+});
+
 Route::get('/reservations/index', [\App\Http\Controllers\ReservationController::class, 'index'])->name('reservation.index');
 
 Route::middleware(['auth','user'])->group(function () {

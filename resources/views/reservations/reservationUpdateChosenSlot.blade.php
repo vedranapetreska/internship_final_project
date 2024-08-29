@@ -67,7 +67,6 @@
                             {{ 'PENDING' }}
                         @else
                             {{ $currentSlot['start'] . '-' . $currentSlot['end'] }}
-
                         @endif
                     </td>
 

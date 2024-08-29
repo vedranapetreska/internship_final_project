@@ -20,7 +20,6 @@
         $selectedDate = Carbon::parse($date);
         $isToday = $selectedDate->isToday();
         $courts = $allSlotsReal;
-//        dd($courts);
     @endphp
     @foreach ($courts[1]['slots'] as $index => $slot)
         <tr>
@@ -35,8 +34,6 @@
                     @endphp
                 @php
                     $start = Carbon::parse($currentSlot['start']);
-//                    $start = $start->copy()->addMinutes(30);
-//                    $end = $start->copy()->addMinutes(30);
                     $today = Carbon::today();
                 @endphp
                 @if($index % 2 == 0 && (!$isToday || ($isToday && $start->greaterThan($now))))
@@ -79,7 +76,6 @@
                             {{ 'PENDING' }}
                         @else
                             {{ $nextSlot['start'] . '-' . $nextSlot['end'] }}
-
                         @endif
                     </td>
                 @endif

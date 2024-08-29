@@ -214,10 +214,14 @@ class ReservationController extends Controller
             'court_id' => $courtId,
             'start_time' => $startTime,
             'end_time' => $endTime,
-            'date' => $date
+            'date' => $date,
+            'status' => 'pending'
         ]);
 
-        // Redirect back with a success message
+        Mail::to('tkprilep@gmail.com')->send(
+            new NewReservation($reservation)
+        );
+
         return redirect()->route('reservation.show')->with('success', 'Reservation updated successfully!');
     }
 

@@ -25,15 +25,12 @@
                 </p>
             </td>
             <td class="border px-4 py-2 flex space-x-2">
-                @if ($reservation->status == 'pending' && ($reservation->start_time > now()->format('H:i')) &&
-                ($reservation->date >= now()->format('Y-m-d')))
+                @if ($reservation->status == 'pending' && ($reservation->date >= now()->format('Y-m-d')))
                     @include('admin.button-approve')
                     @include('admin.button-deny')
-                @elseif($reservation->status == 'approved' && ($reservation->start_time > now()->format('H:i')) &&
-                ($reservation->date >= now()->format('Y-m-d')))
+                @elseif($reservation->status == 'approved' && ($reservation->date >= now()->format('Y-m-d')))
                     @include('admin.button-deny')
-                @elseif($reservation->status == 'denied' && ($reservation->start_time > now()->format('H:i')) &&
-                ($reservation->date >= now()->format('Y-m-d')))
+                @elseif($reservation->status == 'denied' && ($reservation->date >= now()->format('Y-m-d')))
                     @include('admin.button-approve')
                 @endif
                 @include('admin.button-delete')
