@@ -49,7 +49,7 @@ class AdminController extends Controller
 
     public function approveReservation($id)
     {
-        $reservation = Reservation::find($id);
+        $reservation = Reservation::findOrFail($id);
         if ($reservation) {
             $reservation->status = 'approved';
             $reservation->save();
@@ -59,12 +59,12 @@ class AdminController extends Controller
             );
         }
 
-        return redirect()->route('admin.index');
+        return redirect()->back();
     }
 
     public function denyReservation($id)
     {
-        $reservation = Reservation::find($id);
+        $reservation = Reservation::findOrFail($id);
         if ($reservation) {
             $reservation->status = 'denied';
             $reservation->save();
@@ -74,7 +74,7 @@ class AdminController extends Controller
             );
         }
 
-        return redirect()->route('admin.index');
+        return redirect()->back();
     }
     public function deleteReservation($id){
         $reservation = Reservation::findOrFail($id);

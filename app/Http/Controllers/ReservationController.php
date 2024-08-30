@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CancelReservationRequest;
 use App\Http\Requests\ReservationRequest;
 use App\Mail\NewReservation;
 use App\Mail\ReservationDenied;
@@ -14,10 +15,12 @@ use App\Models\User;
 use Carbon\Carbon;
 use App\Services\TimeSlotService;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redirect;
 
 class ReservationController extends Controller
 {
     protected $reservationService;
+
     public function __construct(ReservationService $reservationService)
     {
         $this->reservationService = $reservationService;
@@ -32,7 +35,7 @@ class ReservationController extends Controller
 
         $date = $request->input('date', $today);
 
-        $reservations=Reservation::where('date','>=',$now)
+        $reservations = Reservation::where('date', '>=', $now)
             ->orderBy('date')
             ->orderBy('court_id')->get();
 
@@ -46,8 +49,8 @@ class ReservationController extends Controller
     {
         $courtNumber = (int)$request->query('court_number');
         $date1 = Carbon::parse($request->query('date'))->format('Y-m-d');
-        $startTime=Carbon::parse($request->query('start_time'))->format('H:i');
-        $endTime=Carbon::parse($request->query('end_time'))->format('H:i');
+        $startTime = Carbon::parse($request->query('start_time'))->format('H:i');
+        $endTime = Carbon::parse($request->query('end_time'))->format('H:i');
 
 
         $courtNumbers = Court::pluck('court_number')->toArray();
@@ -58,15 +61,15 @@ class ReservationController extends Controller
         $datesForWeek = $this->reservationService->generateDatesForWeek($now);
         $date = $request->input('date', $today);
 
-        $reservations = Reservation::with('user','court')
-            ->whereBetween('date',[$now,$oneWeekLater])->get();
+        $reservations = Reservation::with('user', 'court')
+            ->whereBetween('date', [$now, $oneWeekLater])->get();
 
         $availableSlots = $this->reservationService->getAvailableSlots($date);
         $allSlotsReal = $availableSlots['allSlots'];
 
         $courts = Court::all();
         return view('reservations.create', compact('courts', 'reservations', 'courtNumbers',
-            'date', 'date1', 'startTime', 'endTime', 'datesForWeek','allSlotsReal','courtNumber'));
+            'date', 'date1', 'startTime', 'endTime', 'datesForWeek', 'allSlotsReal', 'courtNumber'));
     }
 
     public function store(ReservationRequest $request)
@@ -148,8 +151,9 @@ class ReservationController extends Controller
     {
         $courtNumber = (int)$request->query('court_number');
         $date1 = Carbon::parse($request->query('date'))->format('Y-m-d');
-        $startTime=Carbon::parse($request->query('start_time'))->format('H:i');
-        $endTime=Carbon::parse($request->query('end_time'))->format('H:i');
+        $startTime = Carbon::parse($request->query('start_time'))->format('H:i');
+        $endTime = Carbon::parse($request->query('end_time'))->format('H:i');
+        $status = $request->query('status');
 
         $user = Auth::user();
         $courts = Court::all();
@@ -165,7 +169,7 @@ class ReservationController extends Controller
         $availableSlots = $this->reservationService->getAvailableSlots($date);
         $allSlotsReal = $availableSlots['allSlots'];
 
-        return view('reservations.edit', compact('reservation', 'courts','date1','startTime', 'endTime', 'allSlotsReal', 'date', 'datesForWeek', 'courtNumber', 'date', 'datesForWeek', 'allSlotsReal'));
+        return view('reservations.edit', compact('reservation', 'status', 'courts', 'date1', 'startTime', 'endTime', 'allSlotsReal', 'date', 'datesForWeek', 'courtNumber', 'date', 'datesForWeek', 'allSlotsReal'));
     }
 
     /**
@@ -236,5 +240,20 @@ class ReservationController extends Controller
 
         // Redirect
         return redirect()->route('reservation.show')->with('success', 'Reservation deleted successfully!');
+    }
+
+    public function cancel(CancelReservationRequest $request, $id)
+    {
+        $reservation = Reservation::findOrFail($id);
+
+        if($request->validateCancel($reservation)) {
+            $reservation->status = 'canceled';
+            $reservation->save();
+
+            return redirect()->route('reservation.show');
+    }
+
+        return redirect()->back()->with('error', 'Reservations can only be canceled more than 1 hour before the start time.');
+
     }
 }

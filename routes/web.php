@@ -22,6 +22,8 @@ Route::middleware(['auth','user'])->group(function () {
     Route::get('/reservations/{id}/edit', [ReservationController::class, 'edit'])->name('reservation.edit');
     Route::delete('/reservations/{id}', [ReservationController::class, 'destroy'])->name('reservation.destroy');
     Route::put('/reservations/{reservation}', [ReservationController::class, 'update'])->name('reservation.update');
+    Route::put('/reservations/{id}/cancel', [ReservationController::class, 'cancel'])->name('reservation.cancel');
+
 });
 
 Route::middleware(['auth','admin'])->group(function () {

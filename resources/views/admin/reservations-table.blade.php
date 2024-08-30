@@ -8,11 +8,12 @@
         <th>Start time</th>
         <th>End time</th>
         <th>Status</th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody class="overflow-y-auto" style="max-height: 400px">
     @foreach($reservations as $reservation)
-        <tr class="hover:bg-gray-50">
+        <tr>
             <td class="border px-4 py-2">{{ $reservation->user->name }}</td>
             <td class="border px-4 py-2">{{ $reservation->user->email }}</td>
             <td class="border px-4 py-2">{{ $reservation->court->court_number }}</td>
@@ -28,10 +29,6 @@
                 @if ($reservation->status == 'pending' && ($reservation->date >= now()->format('Y-m-d')))
                     @include('admin.button-approve')
                     @include('admin.button-deny')
-                @elseif($reservation->status == 'approved' && ($reservation->date >= now()->format('Y-m-d')))
-                    @include('admin.button-deny')
-                @elseif($reservation->status == 'denied' && ($reservation->date >= now()->format('Y-m-d')))
-                    @include('admin.button-approve')
                 @endif
                 @include('admin.button-delete')
             </td>

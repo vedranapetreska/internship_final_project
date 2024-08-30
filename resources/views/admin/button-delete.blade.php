@@ -3,7 +3,7 @@
       onsubmit="return confirm('Are you sure you want to delete this reservation?');">
     @csrf
     @method('DELETE')
-    <button type="submit" class="bg-red-500 text-white p-1 w-20 rounded-lg text-xs">
+    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white p-1 w-20 rounded-lg text-xs">
         Delete
     </button>
 </form>

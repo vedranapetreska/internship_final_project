@@ -33,8 +33,9 @@
                     @endif
 
                     @include('reservations.ReservationUpdateForm')
-                    @include('reservations.reservationDestroy')
-
+                    @if($status !== 'canceled')
+                    @include('reservations.button-cancel')
+                    @endif
                 </div>
             </div>
             <a href="{{ route('reservation.show') }}"
