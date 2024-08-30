@@ -69,7 +69,6 @@
                             {{ $currentSlot['start'] . '-' . $currentSlot['end'] }}
                         @endif
                     </td>
-
             </tr>
         @endif
 

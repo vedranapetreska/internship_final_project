@@ -8,6 +8,9 @@
 
             @include('admin.reservations-table')
 
+            <a href="{{ route('admin.deleted') }}" class="btn btn-warning">View Deleted Reservations</a>
+
+
         </div>
     </section>
     <x-footer></x-footer>

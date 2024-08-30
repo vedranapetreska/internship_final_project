@@ -76,9 +76,24 @@ class AdminController extends Controller
 
         return redirect()->back();
     }
-    public function deleteReservation($id){
+    public function softDeleteReservation($id){
         $reservation = Reservation::findOrFail($id);
         $reservation->delete();
         return redirect()->back();
     }
+
+    public function showDeletedReservations()
+    {
+        $deletedReservations = Reservation::onlyTrashed()->paginate(10);
+
+        return view('admin.deleted-reservations', compact('deletedReservations'));
+    }
+
+    public function restoreReservation($id)
+    {
+        $reservation = Reservation::withTrashed()->findOrFail($id);
+        $reservation->restore();
+        return redirect()->back()->with('success', 'Reservation restored successfully.');
+    }
+
 }

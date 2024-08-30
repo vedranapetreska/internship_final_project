@@ -229,19 +229,6 @@ class ReservationController extends Controller
         return redirect()->route('reservation.show')->with('success', 'Reservation updated successfully!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $reservation = Reservation::findOrFail($id);
-
-        $reservation->delete();
-
-        // Redirect
-        return redirect()->route('reservation.show')->with('success', 'Reservation deleted successfully!');
-    }
-
     public function cancel(CancelReservationRequest $request, $id)
     {
         $reservation = Reservation::findOrFail($id);
