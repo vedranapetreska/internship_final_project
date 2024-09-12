@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call(CourtSeeder::class);
         $this->call(ReservationSeeder::class);
+        $this->call(AdminSeeder::class);
 
     }
 }

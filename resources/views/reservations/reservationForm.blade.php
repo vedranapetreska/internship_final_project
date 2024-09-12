@@ -3,7 +3,6 @@
     input[type="time"]::-webkit-calendar-picker-indicator {
         display: none;
     }
-
     input[type="time"]::-webkit-inner-spin-button,
     input[type="time"]::-webkit-clear-button {
         display: none;
@@ -47,10 +46,11 @@
 
     <div class="mb-4">
         <label for="start_time" class="block text-sm font-medium text-gray-700">Start Time</label>
-        <input type="time" name="start_time" id="start_time"  value="{{ $startTime }}"
+        <input type="time" name="start_time" id="start_time" value="{{ $startTime }}"
                min="07:00"
                max="21:00"
                step="1800" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+
         @error('start_time')
         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
         @enderror
@@ -67,7 +67,7 @@
         @enderror
     </div>
 
-    <div class="space-x-4 flex" style="margin-top:8rem;display: flex;justify-content: center;align-items: center">
+    <div class="space-x-4 flex" style="margin-top:7rem;display: flex;justify-content: center;align-items: center">
         <button type="submit" class="inline-flex items-center px-4 py-1 border border-transparent text-base font-medium rounded-lg shadow-sm text-black bg-customGreen hover:bg-green-900
          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" style="width:auto;height: 2.5rem">
             Reserve

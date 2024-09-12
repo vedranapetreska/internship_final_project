@@ -2,13 +2,15 @@
     <div class="relative ml-3">
         <div>
             @if (Route::has('login'))
+
                 @auth
-                    <a
-                        href="{{ url('/dashboard') }}"
-                        class="rounded-md px-3 py-1 text-black transition hover:text-gray-500 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-gray-300 dark:focus-visible:ring-white"
-                    >
-                        Dashboard
-                    </a>
+
+{{--                    <a--}}
+{{--                        href="{{ url('/dashboard') }}"--}}
+{{--                        class="rounded-md px-3 py-1 text-black transition hover:text-gray-500 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-gray-300 dark:focus-visible:ring-white"--}}
+{{--                    >--}}
+{{--                        Dashboard--}}
+{{--                    </a>--}}
                 @else
                     <a
                         href="{{ route('login') }}"

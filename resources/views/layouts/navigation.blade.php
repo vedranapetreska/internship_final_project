@@ -3,26 +3,38 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
-                <!-- Logo -->
+                @if(!auth()->check())
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="/">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                @elseif(auth()->user()->role !== 'admin')
+                    <div class="shrink-0 flex items-center">
+                        <a href="/dashboard">
+                            <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                        </a>
+                    </div>
+                @elseif(auth()->user()->role == 'admin')
+                    <div class="shrink-0 flex items-center">
+                        <a href="{{route('admin.index')}}">
+                            <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                        </a>
+                    </div>
+                @endif
+                @if (!auth()->check() || (auth()->check() && auth()->user()->role !== 'admin'))
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link href="{{ route('reservation.index') }}" :active="request()->routeIs('reservation.index')">
                         {{ __('Reservations') }}
                     </x-nav-link>
 
-                    <x-nav-link href="/" :active="request()->routeIs('about')">
+                    <x-nav-link href="/about" :active="request()->routeIs('about')">
                         {{ __('About Us') }}
                     </x-nav-link>
-                    <x-nav-link href="/" :active="request()->routeIs('contact')">
-                        {{ __('Contact') }}
-                    </x-nav-link>
                 </div>
+                @endif
             </div>
+
 
             <!-- Authentication Links -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -58,12 +70,24 @@
                             </form>
                         </x-slot>
                     </x-dropdown>
-                @else
+                @endauth
+
+                    <!-- Admin Panel Link -->
+                    @if(auth()->user() && auth()->user()->role === 'admin')
+                        <div class="ms-4">
+                            <x-nav-link href="{{ route('admin.index') }}" :active="request()->routeIs('admin.index')" title="Admin Panel">
+                                <i class="fas fa-user-shield"></i>
+                            </x-nav-link>
+                        </div>
+
+                     @else
+
                     <!-- Login and Registration Links for Guests -->
                     <div class="rounded-md px-3 py-1 text-black transition hover:text-gray-300 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-gray-300 dark:focus-visible:ring-white">
                         <x-login-registration></x-login-registration>
                     </div>
-                @endauth
+                    @endif
+
             </div>
 
             <!-- Hamburger -->

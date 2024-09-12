@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CancelReservationRequest;
 use App\Http\Requests\ReservationRequest;
+use App\Mail\NewReservation;
+use App\Mail\ReservationDenied;
 use App\Models\Court;
 use App\Models\Reservation;
 use App\Services\ReservationService;
@@ -11,10 +14,13 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Carbon\Carbon;
 use App\Services\TimeSlotService;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redirect;
 
 class ReservationController extends Controller
 {
     protected $reservationService;
+
     public function __construct(ReservationService $reservationService)
     {
         $this->reservationService = $reservationService;
@@ -29,15 +35,13 @@ class ReservationController extends Controller
 
         $date = $request->input('date', $today);
 
-        // Fetch future reservations
-        $reservations=Reservation::where('date','>=',$now)
+        $reservations = Reservation::where('date', '>=', $now)
             ->orderBy('date')
             ->orderBy('court_id')->get();
 
         $availableSlots = $this->reservationService->getAvailableSlots($date);
         $allSlotsReal = $availableSlots['allSlots'];
 
-        // Pass the reservedSlots to the view
         return view('reservations.index', compact('reservations', 'courtNumbers', 'date', 'datesForWeek', 'allSlotsReal'));
     }
 
@@ -45,8 +49,9 @@ class ReservationController extends Controller
     {
         $courtNumber = (int)$request->query('court_number');
         $date1 = Carbon::parse($request->query('date'))->format('Y-m-d');
-        $startTime=Carbon::parse($request->query('start_time'))->format('H:i');
-        $endTime=Carbon::parse($request->query('end_time'))->format('H:i');
+        $startTime = Carbon::parse($request->query('start_time'))->format('H:i');
+        $endTime = Carbon::parse($request->query('end_time'))->format('H:i');
+
 
         $courtNumbers = Court::pluck('court_number')->toArray();
         $now = Carbon::now();
@@ -56,15 +61,15 @@ class ReservationController extends Controller
         $datesForWeek = $this->reservationService->generateDatesForWeek($now);
         $date = $request->input('date', $today);
 
-        $reservations = Reservation::with('user','court')
-            ->whereBetween('date',[$now,$oneWeekLater])->get();
+        $reservations = Reservation::with('user', 'court')
+            ->whereBetween('date', [$now, $oneWeekLater])->get();
 
         $availableSlots = $this->reservationService->getAvailableSlots($date);
         $allSlotsReal = $availableSlots['allSlots'];
 
         $courts = Court::all();
         return view('reservations.create', compact('courts', 'reservations', 'courtNumbers',
-            'date', 'date1', 'startTime', 'endTime', 'datesForWeek','allSlotsReal','courtNumber'));
+            'date', 'date1', 'startTime', 'endTime', 'datesForWeek', 'allSlotsReal', 'courtNumber'));
     }
 
     public function store(ReservationRequest $request)
@@ -73,17 +78,31 @@ class ReservationController extends Controller
         $now = Carbon::now();
         $oneWeekLater = $now->copy()->addWeek();
         $startDateTime = Carbon::parse($request->input('date') . ' ' . $request->input('start_time'));
+        $endDateTime = Carbon::parse($request->input('date') . ' ' . $request->input('end_time'));
 
-        if ($startDateTime->isPast()) {
+        if ($startDateTime->isPast() || $endDateTime->isPast()) {
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'The reservation time must be in the future.');
+        }
+
+        if ($now->between($startDateTime, $endDateTime)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'The current time is within the selected reservation time. Please choose a different time.');
         }
 
         if ($startDateTime->greaterThan($oneWeekLater)) {
             return redirect()->back()
                 ->withInput($request->all())
                 ->with('error', 'The reservation time must be within one week from now.');
+        }
+
+        $durationInMinutes = $startDateTime->diffInMinutes($endDateTime);
+        if ($durationInMinutes < 60) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'The reservation time must be at least 1 hour.');
         }
 
         $startTime = $request->input('start_time');
@@ -98,13 +117,18 @@ class ReservationController extends Controller
                 ->with('error', 'The selected time slot overlaps with an existing reservation.');
         }
 
-        Reservation::create([
+
+        $reservation = Reservation::create([
             'user_id' => Auth::id(),
             'court_id' => $courtId,
             'start_time' => $startTime,
             'end_time' => $endTime,
-            'date' => $date
+            'date' => $date,
         ]);
+
+        Mail::to('tkprilep@gmail.com')->send(
+            new NewReservation($reservation)
+        );
 
         return redirect()->route('reservation.show')->with('success', 'Reservation made successfully!');
     }
@@ -127,8 +151,9 @@ class ReservationController extends Controller
     {
         $courtNumber = (int)$request->query('court_number');
         $date1 = Carbon::parse($request->query('date'))->format('Y-m-d');
-        $startTime=Carbon::parse($request->query('start_time'))->format('H:i');
-        $endTime=Carbon::parse($request->query('end_time'))->format('H:i');
+        $startTime = Carbon::parse($request->query('start_time'))->format('H:i');
+        $endTime = Carbon::parse($request->query('end_time'))->format('H:i');
+        $status = $request->query('status');
 
         $user = Auth::user();
         $courts = Court::all();
@@ -144,7 +169,7 @@ class ReservationController extends Controller
         $availableSlots = $this->reservationService->getAvailableSlots($date);
         $allSlotsReal = $availableSlots['allSlots'];
 
-        return view('reservations.edit', compact('reservation', 'courts','date1','startTime', 'endTime', 'allSlotsReal', 'date', 'datesForWeek', 'courtNumber', 'date', 'datesForWeek', 'allSlotsReal'));
+        return view('reservations.edit', compact('reservation', 'status', 'courts', 'date1', 'startTime', 'endTime', 'allSlotsReal', 'date', 'datesForWeek', 'courtNumber', 'date', 'datesForWeek', 'allSlotsReal'));
     }
 
     /**
@@ -156,7 +181,9 @@ class ReservationController extends Controller
         $oneWeekLater = $now->copy()->addWeek();
         $startDateTime = Carbon::parse($request->input('date') . ' ' . $request->input('start_time'));
 
-        if ($startDateTime->isPast()) {
+        $endDateTime = Carbon::parse($request->input('date') . ' ' . $request->input('end_time'));
+
+        if ($startDateTime->isPast() || $endDateTime->isPast()) {
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'The reservation time must be in the future.');
@@ -166,6 +193,13 @@ class ReservationController extends Controller
             return redirect()->back()
                 ->withInput($request->all())
                 ->with('error', 'The reservation time must be within one week from now.');
+        }
+
+        $durationInMinutes = $startDateTime->diffInMinutes($endDateTime);
+        if ($durationInMinutes < 60) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'The reservation time must be at least 1 hour.');
         }
 
         $startTime = $request->input('start_time');
@@ -184,23 +218,29 @@ class ReservationController extends Controller
             'court_id' => $courtId,
             'start_time' => $startTime,
             'end_time' => $endTime,
-            'date' => $date
+            'date' => $date,
+            'status' => 'pending'
         ]);
 
-        // Redirect back with a success message
+        Mail::to('tkprilep@gmail.com')->send(
+            new NewReservation($reservation)
+        );
+
         return redirect()->route('reservation.show')->with('success', 'Reservation updated successfully!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function cancel(CancelReservationRequest $request, $id)
     {
         $reservation = Reservation::findOrFail($id);
 
-        $reservation->delete();
+        if($request->validateCancel($reservation)) {
+            $reservation->status = 'canceled';
+            $reservation->save();
 
-        // Redirect
-        return redirect()->route('reservation.show')->with('success', 'Reservation deleted successfully!');
+            return redirect()->route('reservation.show');
+    }
+
+        return redirect()->back()->with('error', 'Reservations can only be canceled more than 1 hour before the start time.');
+
     }
 }

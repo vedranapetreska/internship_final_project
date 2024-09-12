@@ -168,6 +168,7 @@ For successfully setting up the project, you need the following requisites
 - **MySQL**
 - **Herd** (for laravel development)
 
+
 # Setup Instructions
 
 Follow these steps to set up the project locally:
@@ -197,6 +198,28 @@ Follow these steps to set up the project locally:
     - `npm run dev`
 10. Run the Development Server
      - `php artisan serve`
-   
+       
+# Setup Mailtrap in Laravel
+
+ 1. Configure Mailtrap
+    - Log in to Mailtrap: Go to your Mailtrap dashboard and log in to your account. 
+    - Create a Mailtrap Inbox:
+    - Navigate to the "Inboxes" tab. 
+    - Click on "Create Inbox" and follow the prompts to create a new inbox. 
+    - Get SMTP Credentials:
+        - After creating an inbox, go to the "SMTP Settings" tab.
+        - Copy the SMTP credentials provided (SMTP host, port, username, and password).
+ 2. Update Laravel Configuration
+    - Set Mailtrap Credentials:
+        - Open your Laravel project's .env file located in the root directory. 
+        - Update the mail configuration with your Mailtrap credentials:
+        - `MAIL_MAILER=smtp
+          MAIL_HOST=sandbox.smtp.mailtrap.io
+          MAIL_PORT=2525
+          MAIL_USERNAME=a35faa86e93592
+          MAIL_PASSWORD=ae39c627804cee
+          MAIL_ENCRYPTION=null
+          MAIL_FROM_ADDRESS="tkprilep@gmail.com"
+          MAIL_FROM_NAME="TKPrilep"`
 
 

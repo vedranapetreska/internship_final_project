@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\ReservationService;
 use App\Services\TimeSlotService;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,6 +15,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(TimeSlotService::class, function ($app) {
             return new TimeSlotService();
+        });
+
+        $this->app->singleton(ReservationService::class, function ($app) {
+            return new ReservationService(new TimeSlotService());
         });
     }
 

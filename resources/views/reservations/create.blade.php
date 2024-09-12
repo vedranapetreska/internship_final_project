@@ -5,14 +5,12 @@
         <div class="flex flex-row justify-between max-w-4xl mx-auto p-4 space-x-4">
             <div class="flex-1 bg-white shadow-md rounded-lg p-3">
                 <div class="w-full max-w-sm" style="display: flex;justify-content: center;flex-direction: column;align-items:center ">
-
                     <p class="border-2 border-black bg-gray-100 text-center text-xl font-medium py-2 rounded-md shadow-md mt-4" style="width:10rem">
                         {{ $date }}
                     </p>
                 </div>
 
                 @include('reservations.reservationChosenSlot')
-
 
             </div>
 

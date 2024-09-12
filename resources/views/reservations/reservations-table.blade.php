@@ -16,42 +16,66 @@
     </thead>
     <tbody>
     @php
+        $now = Carbon::now();
+        $selectedDate = Carbon::parse($date);
+        $isToday = $selectedDate->isToday();
         $courts = $allSlotsReal;
     @endphp
-    @foreach ($courts[0]['allSlots'] as $index => $slot)
+    @foreach ($courts[1]['slots'] as $index => $slot)
         <tr>
             @foreach ($courts as $court)
                     @php
-                        $currentSlot = $court['allSlots'][$index];
-                        if($index < count($court['allSlots']) - 1)
-                        $nextSlot = $court['allSlots'][$index+1];
+                        $currentSlot = $court['slots'][$index];
+                        if($index < count($court['slots']) - 1)
+                            $nextSlot = $court['slots'][$index+1];
 
-                        if($index < count($court['allSlots']) - 2)
-                        $nextNextSlot = $court['allSlots'][$index+2]
-//
+                        if($index < count($court['slots']) - 2)
+                            $nextNextSlot = $court['slots'][$index+2]
                     @endphp
                 @php
                     $start = Carbon::parse($currentSlot['start']);
-                    $start = $start->copy()->addMinutes(30);
-                    $end = $start->copy()->addMinutes(30);
+                    $today = Carbon::today();
                 @endphp
-                @if($index%2==0)
-                    <td class="border border-gray-300 px-2 py-1 text-center shadow-lg {{ $currentSlot['reserved'] ? 'bg-red-400 text-white' : 'bg-green-500 text-white'}} {{ $loop->first ? '' : 'border-l-4' }}">
-                        @if ($currentSlot['reserved'])
+                @if($index % 2 == 0 && (!$isToday || ($isToday && $start->greaterThan($now))))
+                    <td class="border border-gray-300 px-2 py-1 text-center shadow-lg {{ $currentSlot['status'] == 'approved' ? 'bg-red-400 text-white' : ($currentSlot['status'] == 'pending' ? 'bg-yellow-400 text-white' : 'bg-green-500 text-white') }} {{ $loop->first ? '' : 'border-l-4' }}">
+                        @if ($currentSlot['status'] == 'approved')
                             {{ 'RESERVED' }}
+                        @elseif ($currentSlot['status'] == 'pending')
+                            {{ 'PENDING' }}
                         @else
-                            <a href="{{route('reservation.create')}}?court_number={{$court['court_number']}}&date={{$date}}&start_time={{$currentSlot['start']}}&end_time={{$nextSlot['end']}}" class=" block w-full bg-green-500 hover:bg-green-600 text-white">
+                            <a href="{{ route('reservation.create') }}?court_number={{ $court['court_number'] }}&date={{ $date }}&start_time={{ $currentSlot['start'] }}&end_time={{ $nextSlot['end'] }}" class="block w-full bg-green-500 hover:bg-green-600 text-white">
                                 {{ $currentSlot['start'] . '-' . $currentSlot['end'] }}
                             </a>
                         @endif
                     </td>
-                    <td class="border border-gray-300 px-2 py-1 text-center shadow-lg {{ $nextSlot['reserved'] ? 'bg-red-400 text-white' : 'bg-green-500 text-white'}}">
-                        @if ($nextSlot['reserved'])
+                    <td class="border border-gray-300 px-2 py-1 text-center shadow-lg {{ $nextSlot['status'] == 'approved' ? 'bg-red-400 text-white' : ($nextSlot['status'] == 'pending' ? 'bg-yellow-400 text-white' : 'bg-green-500 text-white') }}">
+                        @if ($nextSlot['status'] == 'approved')
                             {{ 'RESERVED' }}
+                        @elseif ($nextSlot['status'] == 'pending')
+                            {{ 'PENDING' }}
                         @else
-                            <a href="{{route('reservation.create')}}?court_number={{$court['court_number']}}&date={{$date}}&start_time={{$nextSlot['start']}}&end_time={{$nextNextSlot['end']}}" class="block w-full bg-green-500 hover:bg-green-600 text-white">
+                            <a href="{{ route('reservation.create') }}?court_number={{ $court['court_number'] }}&date={{ $date }}&start_time={{ $nextSlot['start'] }}&end_time={{ $nextNextSlot['end'] }}" class="block w-full bg-green-500 hover:bg-green-600 text-white">
                                 {{ $nextSlot['start'] . '-' . $nextSlot['end'] }}
                             </a>
+                        @endif
+                    </td>
+                @elseif($index % 2 == 0 )
+                    <td class="border border-gray-300 px-2 py-1 text-center shadow-lg  {{ $currentSlot['status'] == 'approved' ? 'bg-red-300 text-white' : ($currentSlot['status'] == 'pending' ? 'bg-yellow-300 text-white' : 'bg-green-400 text-white') }} {{ $loop->first ? '' : 'border-l-4' }}">
+                        @if ($currentSlot['status'] == 'approved')
+                            {{ 'RESERVED' }}
+                        @elseif ($currentSlot['status'] == 'pending')
+                            {{ 'PENDING' }}
+                        @else
+                            {{ $currentSlot['start'] . '-' . $currentSlot['end'] }}
+                        @endif
+                    </td>
+                    <td class="border border-gray-300 px-2 py-1 text-center shadow-lg {{ $nextSlot['status'] == 'approved' ? 'bg-red-300 text-white' : ($nextSlot['status'] == 'pending' ? 'bg-yellow-300 text-white' : 'bg-green-400 text-white') }}">
+                        @if ($nextSlot['status'] == 'approved')
+                            {{ 'RESERVED' }}
+                        @elseif ($nextSlot['status'] == 'pending')
+                            {{ 'PENDING' }}
+                        @else
+                            {{ $nextSlot['start'] . '-' . $nextSlot['end'] }}
                         @endif
                     </td>
                 @endif
